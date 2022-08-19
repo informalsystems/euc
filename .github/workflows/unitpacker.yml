@@ -5,7 +5,7 @@
 # MAC_INST_CERTIFICATE - base64-encoded p12 export of the private key and the certificate from the keychain.
 # MAC_INST_CERTIFICATE_PASSPHRASE - passphrase for the MAC_INST_CERTIFICATE private key
 # MAC_INST_CERTIFICATE_CN - common name on the MAC_INST_CERTIFICATE
-# GPG_PRIVATE_KEY - base64-encoded GPG private key file for Linux signing
+# GPG_PRIVATE_KEY - PGP private key block for Linux signing
 # GPG_PASSPHRASE - passphrase for the GPG_PRIVATE_KEY
 ##
 # [APP]lication signing identity is used to sign individual files.
@@ -239,7 +239,9 @@ jobs:
           wget -q -O stemplate https://github.com/freshautomations/stemplate/releases/download/v0.6.1/stemplate_darwin_amd64
           chmod 755 stemplate ${{ matrix.network.daemon_name }}
           mkdir -p package/usr/local/bin package/usr/local/lib/${{ matrix.network.daemon_name }}
-          ./stemplate Info.plist.template --env --output package/usr/local/lib/${{ matrix.network.daemon_name }}/Info.plist
+          export NAME="${{ matrix.network.daemon_name }}"
+          export VERSION="${{ matrix.network.codebase.recommended_version }}"
+          ./stemplate Info.plist.template --string NAME,VERSION --output package/usr/local/lib/${{ matrix.network.daemon_name }}/Info.plist
           mv ${{ matrix.network.daemon_name }} package/usr/local/bin
           if [ "${{ needs.build.outputs.wasm }}" != "" ]; then mv libwasmvm.dylib "package/usr/local/lib/${{ matrix.network.daemon_name }}/"; fi
           pkgbuild --root package ${{ matrix.network.daemon_name }}_${{ matrix.network.codebase.recommended_version }}_mac.pkg --sign "${{ secrets.MAC_INST_CERTIFICATE_CN }}"
