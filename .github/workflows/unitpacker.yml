@@ -244,7 +244,8 @@ jobs:
           ./stemplate Info.plist.template --string NAME,VERSION --output package/usr/local/lib/${{ matrix.network.daemon_name }}/Info.plist
           mv ${{ matrix.network.daemon_name }} package/usr/local/bin
           if [ "${{ needs.build.outputs.wasm }}" != "" ]; then mv libwasmvm.dylib "package/usr/local/lib/${{ matrix.network.daemon_name }}/"; fi
-          pkgbuild --root package ${{ matrix.network.daemon_name }}_${{ matrix.network.codebase.recommended_version }}_mac.pkg --sign "${{ secrets.MAC_INST_CERTIFICATE_CN }}"
+          pkgbuild --root package ${{ matrix.network.daemon_name }}_${{ matrix.network.codebase.recommended_version }}_mac.pkg
+#Disable package signature until we get an Apple Developer ID          --timestamp --sign "${{ secrets.MAC_INST_CERTIFICATE_CN }}"
 
       - uses: actions/upload-artifact@v3
         with:
