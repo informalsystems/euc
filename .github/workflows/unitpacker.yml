@@ -83,7 +83,7 @@ jobs:
           fi
 
       - name: Dynamic RPATH for libwasm library access on MacOS
-        if: outputs.wasm != '' && runner.os == 'macOS'
+        if: steps.get-wasm.output.wasm != '' && runner.os == 'macOS'
         run: install_name_tool -add_rpath "@executable_path/../lib/${{ matrix.network.daemon_name }}" ~/go/bin/${{ matrix.network.daemon_name }}
 
       #Note: Separating uploads flattens the uploaded data, so we can get rid of paths.
@@ -95,12 +95,12 @@ jobs:
           path: ~/go/bin/${{ matrix.network.daemon_name }}*
 
       - uses: actions/upload-artifact@v3
-        if: outputs.wasm != ''
+        if: steps.get-wasm.output.wasm != ''
         with:
           name: ${{ github.run_id }}.${{ matrix.os }}
           if-no-files-found: error
           retention-days: 3
-          path: ~/go/pkg/mod/github.com/\!cosm\!wasm/wasmvm@${{ outputs.wasm }}/api/libwasmvm.*
+          path: ~/go/pkg/mod/github.com/\!cosm\!wasm/wasmvm@${{ steps.get-wasm.output.wasm }}/api/libwasmvm.*
 
 
   sign:
