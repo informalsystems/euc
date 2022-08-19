@@ -86,6 +86,7 @@ jobs:
             echo "No WASM library found."
           fi
 
+      # Details: https://developer.apple.com/documentation/xcode/embedding-nonstandard-code-structures-in-a-bundle
       - name: Dynamic RPATH for libwasm library access on MacOS
         if: steps.get-wasm.outputs.wasm != '' && runner.os == 'macOS'
         run: install_name_tool -add_rpath "@executable_path/../lib/${{ matrix.network.daemon_name }}" ~/go/bin/${{ matrix.network.daemon_name }}
@@ -267,9 +268,11 @@ jobs:
 
       - uses: actions/download-artifact@v3
         with:
-          name: |
-            ${{ github.run_id }}.${{ fromJSON(needs.config.outputs.config).os[0] }}.signed
-            ${{ github.run_id }}.${{ fromJSON(needs.config.outputs.config).os[1] }}.signed
+          name: ${{ github.run_id }}.${{ fromJSON(needs.config.outputs.config).os[0] }}.signed
+
+      - uses: actions/download-artifact@v3
+        with:
+          name: ${{ github.run_id }}.${{ fromJSON(needs.config.outputs.config).os[1] }}.signed
 
       - uses: softprops/action-gh-release@v1
         if: startsWith(github.ref, 'refs/tags/')
