@@ -1,0 +1,21 @@
+{
+  "os": [
+    "macos-12",
+    "ubuntu-20.04"
+  ],
+  "network": [
+    {
+      "daemon_name": "gaiad",
+      "codebase": {
+        "recommended_version": "v7.0.2"
+      },
+      "chain_name": "cosmoshub"
+    },
+    {
+      "daemon_name": "regen"
+    },
+    {
+      "chain_name": "osmosis"
+    }
+  ]
+}
