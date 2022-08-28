@@ -238,7 +238,7 @@ jobs:
           name: ${{ github.run_id }}.${{ matrix.os }}.signed
           if-no-files-found: error
           retention-days: 3
-          path:
+          path: |
             libwasmvm*.so
             libwasmvm*.so.asc
 
