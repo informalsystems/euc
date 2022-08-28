@@ -6,7 +6,7 @@ INPUT="${1:-cosmos-v0.0.0}"
 export COSMOS_VERSION="${INPUT##cosmos-}"
 BINARY_NUMBER="$(jq -r '.package|length' config.json)"
 
-NAMES_COMMA_SEPARATED=""
+PKG_LIST=""
 for i in $(seq 0 $((BINARY_NUMBER - 1)));
 do
   PACKAGE="$(jq '.package['"$i"']' config.json)"
@@ -15,10 +15,10 @@ do
   VERSION="$(echo "$PACKAGE" | jq -r .version)"
   LINK="https://github.com/informalsystems/euc/releases/download/${NAME}-${BUILD}/${NAME}_${VERSION}_mac.pkg"
   echo "Getting $LINK"
-  wget -q -O "${NAME}_${VERSION}_mac.pkg" "$LINK"
-  NAMES_COMMA_SEPARATED="${NAMES_COMMA_SEPARATED},${NAME}"
+  wget -q -O "${NAME}.pkg" "$LINK"
+  PKG_LIST="${PKG_LIST},${NAME}"
 done
-export BINARIES="${NAMES_COMMA_SEPARATED##,}"
+export BINARIES="${PKG_LIST##,}"
 
 cp LICENSE Resources/LICENSE
 
