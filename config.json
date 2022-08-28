@@ -1,4 +1,21 @@
 {
+  "package": [
+    {
+      "name": "regen",
+      "build": "v1",
+      "version": "v4.0.0"
+    },
+    {
+      "name": "osmosisd",
+      "build": "v4",
+      "version": "v11.0.0"
+    },
+    {
+      "name": "gaiad",
+      "build": "v1",
+      "version": "v7.0.2"
+    }
+  ],
   "os": [
     "macos-12",
     "ubuntu-20.04"

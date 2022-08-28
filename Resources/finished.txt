@@ -1,0 +1,8 @@
+After closing this installer you can open a Terminal of your choice and run the CLI commands directly.
+
+Thank you for choosing Informal Systems and Cephalopod Equipment Corp. for your Cosmos CLI needs.
+
+Stake with us!
+
+https://informal.systems
+https://cephalopod.equipment

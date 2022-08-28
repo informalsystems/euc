@@ -1,0 +1,61 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/informalsystems/euc/main/config.schema.json",
+  "title": "Config",
+  "description": "Configuration for building binary packages",
+  "type": "object",
+
+  "properties": {
+
+    "package": {
+      "description": "List of binaries that will be included in the installation package",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "description": "the name of the binary to include",
+            "type": "string"
+          },
+          "build": {
+            "description": "the build number defined in GitHub Actions",
+            "type": "string"
+          },
+          "version": {
+            "description": "the version number of the binary package on the release file",
+            "type": "string"
+          },
+          "required": ["name", "build", "version"]
+        }
+      },
+      "minItems": 1,
+      "uniqueItems": true
+    },
+
+    "os": {
+      "description": "List of operating systems defined in GitHub Actions that will be built",
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "minItems": 1,
+      "uniqueItems": true
+    },
+
+    "network": {
+      "description": "List of networks that can be built",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "$ref": "https://raw.githubusercontent.com/cosmos/chain-registry/master/chain.schema.json",
+          "description": "Partial definitions are accepted, the rest will be filled in from the Cosmos chain registry. Use 'daemon_name' and/or 'chain_name' to define a pointer to the chain registry."
+        }
+      },
+      "minItems": 1,
+      "uniqueItems": true
+    }
+  },
+
+  "required": ["package", "os", "network"]
+}
