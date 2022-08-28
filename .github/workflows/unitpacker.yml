@@ -292,8 +292,11 @@ jobs:
           echo "$OUT"
           STATUS="$(echo "$OUT" | jq -r .status)"
           ID="$(echo "$OUT" | jq -r .id)"
-          if [ "$STATUS" != "Accepted" ]; then exit 1 ; fi          
-          xcrun notarytool log "$ID" --apple-id "${{ secrets.MAC_STORE_APPLE_ID }}" --password "${{ secrets.MAC_STORE_APP_SPECIFIC_PASSWORD }}" --team-id "${{ secrets.MAC_STORE_TEAM_ID }}"
+          if [ "$STATUS" != "Accepted" ]; then exit 1 ; fi
+          LOG="$(xcrun notarytool log "$ID" --apple-id "${{ secrets.MAC_STORE_APPLE_ID }}" --password "${{ secrets.MAC_STORE_APP_SPECIFIC_PASSWORD }}" --team-id "${{ secrets.MAC_STORE_TEAM_ID }}")"
+          echo "$LOG"
+          ISSUES="$(echo "$LOG" | jq -r .issues)"
+          if [ "$ISSUES" != "null" ]; then exit 1 ; fi
 
       - name: Staple package
         if: runner.os == 'macOS'
