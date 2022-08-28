@@ -15,6 +15,7 @@
       "daemon_name": "regen"
     },
     {
+      "daemon_name": "osmosisd",
       "chain_name": "osmosis"
     }
   ]

@@ -1,7 +1,7 @@
 #!/bin/sh
 # GitHub Actions script to gather configuration from the local config.json file
 # and the chain registry on the Internet.
-set -eu
+set -eux
 
 # Find (optional) config.json 'network' configuration for custom settings - Output: CHAIN_NAME
 DAEMON_NAME="$(echo "$1" | cut -d- -f1)"
