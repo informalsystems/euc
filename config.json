@@ -23,10 +23,10 @@
   "network": [
     {
       "daemon_name": "gaiad",
+      "chain_name": "cosmoshub",
       "codebase": {
         "recommended_version": "v7.0.2"
-      },
-      "chain_name": "cosmoshub"
+      }
     },
     {
       "daemon_name": "regen"
@@ -34,6 +34,10 @@
     {
       "daemon_name": "osmosisd",
       "chain_name": "osmosis"
+    },
+    {
+      "daemon_name": "junod",
+      "chain_name": "juno"
     }
   ]
 }
