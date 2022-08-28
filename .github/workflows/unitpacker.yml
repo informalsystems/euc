@@ -55,6 +55,7 @@ on:
       - "gaiad-*"
       - "regen-*"
       - "osmosisd-*"
+      - "junod-*"
 
 jobs:
 
