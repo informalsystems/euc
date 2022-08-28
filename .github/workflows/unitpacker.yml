@@ -1,15 +1,49 @@
 # Required secrets in GitHub:
-# MAC_APP_CERTIFICATE - base64-encoded p12 export of the private key and the certificate from the keychain.
+###
+###
+# MAC_APP_CERTIFICATE - Developer ID Application certificate, private key and CA certificate.
+# Export these three items from your Mac's local keystore:
+# * Your (encrypted) private key corresponding to your Developer ID Application certificate
+# * Your Apple Developer ID Application Certificate
+# * Apple's "Developer ID Certification Authority" root certificate.
+# Base64-encode the resulting p12 file and paste the string in this secret.
+# The Application signing identity is used to sign individual files.
+###
 # MAC_APP_CERTIFICATE_PASSPHRASE - passphrase for the MAC_APP_CERTIFICATE private key
+# The passphrase that you used to encrypt your private key during the export.
+###
 # MAC_APP_CERTIFICATE_CN - common name on the MAC_APP_CERTIFICATE
-# MAC_INST_CERTIFICATE - base64-encoded p12 export of the private key and the certificate from the keychain.
+# This looks something like this: "Developer ID Application: <Your name or company name> (<TeamID>)"
+# If it does not start with "Developer ID Application: " it is the incorrect certificate or name.
+###
+###
+# MAC_INST_CERTIFICATE - Developer ID Installer certificate and private key.
+# Export these two items from your Mac's local keystore:
+# * Your (encrypted) private key corresponding to your Developer ID Installer certificate
+# * Your Apple Developer ID Installer Certificate
+# Base64-encode the resulting p12 file and paste the string in this secret.
+# The Installer signing identity is used to sign packages.
+###
 # MAC_INST_CERTIFICATE_PASSPHRASE - passphrase for the MAC_INST_CERTIFICATE private key
+# The passphrase that you used to encrypt your private key during the export.
+###
 # MAC_INST_CERTIFICATE_CN - common name on the MAC_INST_CERTIFICATE
+# This looks something like this: "Developer ID Installer: <Your name or company name> (<TeamID>)"
+# If it does not start with "Developer ID Installer: " it is the incorrect certificate or name.
+###
+###
+# MAC_STORE_APPLE_ID - Apple ID of the user requesting notarization
+# Usually an e-mail address.
+###
+# MAC_STORE_APP_SPECIFIC_PASSWORD - Application specific password of the user requesting notarization.
+# You can request an app-specific password for your Apple ID user at https://appleid.apple.com
+###
+# MAC_STORE_TEAM_ID - Team ID of the user or organization
+# This is the same 10 characters that are displayed in your certificate CN at the end in brackets.
+###
 # GPG_PRIVATE_KEY - PGP private key block for Linux signing
 # GPG_PASSPHRASE - passphrase for the GPG_PRIVATE_KEY
 ##
-# [APP]lication signing identity is used to sign individual files.
-# [INST]aller signing identity is used to sign packages.
 
 # https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows
 # > Note: An event will not be created when you push more than three tags at once.
@@ -250,6 +284,22 @@ jobs:
           mv ${{ matrix.network.daemon_name }} package/usr/local/bin
           if [ "${{ needs.build.outputs.wasm }}" != "" ]; then mv libwasmvm.dylib "package/usr/local/lib/${{ matrix.network.daemon_name }}/"; fi
           pkgbuild --root package ${{ matrix.network.daemon_name }}_${{ matrix.network.codebase.recommended_version }}_mac.pkg --timestamp --sign "${{ secrets.MAC_INST_CERTIFICATE_CN }}"
+
+      - name: Notarize package
+        if: runner.os == 'macOS'
+        run: |
+          OUT="$(xcrun notarytool submit ${{ matrix.network.daemon_name }}_${{ matrix.network.codebase.recommended_version }}_mac.pkg --wait -f json --apple-id "${{ secrets.MAC_STORE_APPLE_ID }}" --password "${{ secrets.MAC_STORE_APP_SPECIFIC_PASSWORD }}" --team-id "${{ secrets.MAC_STORE_TEAM_ID }}")"
+          echo "$OUT"
+          STATUS="$(echo "$OUT" | jq -r .status)"
+          ID="$(echo "$OUT" | jq -r .id)"
+          if [ "$STATUS" != "Accepted" ]; then exit 1 ; fi          
+          xcrun notarytool log "$ID" --apple-id "${{ secrets.MAC_STORE_APPLE_ID }}" --password "${{ secrets.MAC_STORE_APP_SPECIFIC_PASSWORD }}" --team-id "${{ secrets.MAC_STORE_TEAM_ID }}"
+
+      - name: Staple package
+        if: runner.os == 'macOS'
+        run: |
+          xcrun stapler staple ${{ matrix.network.daemon_name }}_${{ matrix.network.codebase.recommended_version }}_mac.pkg
+          xcrun stapler validate ${{ matrix.network.daemon_name }}_${{ matrix.network.codebase.recommended_version }}_mac.pkg
 
       - uses: actions/upload-artifact@v3
         with:
