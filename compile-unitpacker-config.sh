@@ -4,7 +4,7 @@
 set -eux
 
 # Find (optional) config.json 'network' configuration for custom settings - Output: CHAIN_NAME
-DAEMON_NAME="$(echo "$1" | cut -d- -f1)"
+DAEMON_NAME="$(echo "$1" | sed 's/^\(.*\)-v.*$/\1/')"
 LOCAL_NETWORK_CONFIG="$(jq '.network | map(select(.daemon_name == "'"$DAEMON_NAME"'"))[0]' config.json)"
 if [ "$LOCAL_NETWORK_CONFIG" = "null" ]; then
   CHAIN_NAME="$DAEMON_NAME"
