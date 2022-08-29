@@ -52,11 +52,8 @@ name: unitpacker
 on:
   push:
     tags:
-      - "gaiad-*"
-      - "regen-*"
-      - "osmosisd-*"
-      - "junod-*"
-      - "akash-*"
+      - "*-v*"
+      - "!cosmos-v*"
 
 jobs:
 
