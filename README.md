@@ -13,9 +13,9 @@ Currently, only Intel-based macOS computers are supported.
 
 Latest version:
 
-| Name | Status |
-|------|--------|
-| [cosmos-v5](https://github.com/informalsystems/euc/releases/download/cosmos-v5/cosmos-v5.pkg) | [![status](https://github.com/informalsystems/euc/actions/workflows/appreleaser.yml/badge.svg)](https://github.com/informalsystems/euc/actions/workflows/appreleaser.yml) |
+| Name                                                                                          | Status |
+|-----------------------------------------------------------------------------------------------|--------|
+| [cosmos-v7](https://github.com/informalsystems/euc/releases/download/cosmos-v7/cosmos-v7.pkg) | [![status](https://github.com/informalsystems/euc/actions/workflows/appreleaser.yml/badge.svg)](https://github.com/informalsystems/euc/actions/workflows/appreleaser.yml) |
 
 
 Gathered binaries:
