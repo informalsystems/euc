@@ -28,8 +28,8 @@ else
   echo "::debug::Chain file already exists, skipping download."
 fi
 
-# Merge local network configuration with the chain registry file.
-# Change codebase.git_repo to owner/repo from full URL. (Needed for GitHub actions/checkout.)
+# 1. Merge local network configuration with the chain registry file.
+# 2. Change codebase.git_repo to owner/repo from full URL. (Needed for GitHub actions/checkout.)
 if [ "$LOCAL_NETWORK_CONFIG" = "null" ]; then
   COMPILED_NETWORK_CONFIG="${CHAIN_NAME}_chain.json"
 else
@@ -42,5 +42,6 @@ GIT_REPO="${GIT_REPO##https://github.com/}"
 echo "$COMPILED_NETWORK_CONFIG" | jq ".codebase.git_repo=\"${GIT_REPO}\"" > "${CHAIN_NAME}_compiled_network_config.json"
 
 # Overwrite local network configuration with the compiled local+registry configuration.
-CONFIG="$(jq -s '.[0] + {network: [.[1]]}' config.json "${CHAIN_NAME}_compiled_network_config.json" | tr -d '\n')"
+# Keep only the 'os' and 'network' keys for unitpacker. It will start len(os)*len(network) number of executions.
+CONFIG="$(jq -s '{os: .[0].os} + {network: [.[1]]}' config.json "${CHAIN_NAME}_compiled_network_config.json" | tr -d '\n')"
 echo "::set-output name=config::$CONFIG"
