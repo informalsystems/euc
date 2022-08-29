@@ -39,6 +39,7 @@ fi
 # Homework: do the string replacement using jq only.
 GIT_REPO="$(echo "$COMPILED_NETWORK_CONFIG" | jq -r '.codebase.git_repo' )"
 GIT_REPO="${GIT_REPO##https://github.com/}"
+GIT_REPO="${GIT_REPO%%/}"
 echo "$COMPILED_NETWORK_CONFIG" | jq ".codebase.git_repo=\"${GIT_REPO}\"" > "${CHAIN_NAME}_compiled_network_config.json"
 
 # Overwrite local network configuration with the compiled local+registry configuration.
