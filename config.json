@@ -51,6 +51,21 @@
     },
     {
       "daemon_name": "akash"
+    },
+    {
+      "daemon_name": "ag0",
+      "chain_name": "agoric"
+    },
+    {
+      "daemon_name": "cheqd-noded",
+      "chain_name": "cheqd"
+    },
+    {
+      "daemon_name": "ixod",
+      "chain_name": "impacthub"
+    },
+    {
+      "daemon_name": "nomic"
     }
   ]
 }

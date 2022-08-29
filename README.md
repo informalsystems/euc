@@ -20,10 +20,14 @@ Latest version:
 
 Gathered binaries:
 
-| Binary | Version | Build    | Status                                                                                                                                                                                     |
-|--------|---------|----------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| gaiad  | v7.0.2  | gaiad-v1 | [![status](https://github.com/informalsystems/euc/actions/workflows/unitpacker.yml/badge.svg?branch=gaiad-v1)](https://github.com/informalsystems/euc/actions/workflows/unitpacker.yml)    |
-| regen | v4.0.0 | regen-v1 | [![status](https://github.com/informalsystems/euc/actions/workflows/unitpacker.yml/badge.svg?branch=regen-v1)](https://github.com/informalsystems/euc/actions/workflows/unitpacker.yml)    |
+| Binary   | Version | Build    | Status                                                                                                                                                                                     |
+|----------|---------|----------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| gaiad    | v7.0.2  | gaiad-v1 | [![status](https://github.com/informalsystems/euc/actions/workflows/unitpacker.yml/badge.svg?branch=gaiad-v1)](https://github.com/informalsystems/euc/actions/workflows/unitpacker.yml)    |
+| regen    | v4.0.0 | regen-v1 | [![status](https://github.com/informalsystems/euc/actions/workflows/unitpacker.yml/badge.svg?branch=regen-v1)](https://github.com/informalsystems/euc/actions/workflows/unitpacker.yml)    |
 | osmosisd | v11.0.0 | osmosisd-v4 | [![status](https://github.com/informalsystems/euc/actions/workflows/unitpacker.yml/badge.svg?branch=osmosisd-v4)](https://github.com/informalsystems/euc/actions/workflows/unitpacker.yml) |
-| junod | v9.0.0 | junod-v3 | [![status](https://github.com/informalsystems/euc/actions/workflows/unitpacker.yml/badge.svg?branch=junod-v3)](https://github.com/informalsystems/euc/actions/workflows/unitpacker.yml)    |
-| akash | v0.16.3 | akash-v2 | [![status](https://github.com/informalsystems/euc/actions/workflows/unitpacker.yml/badge.svg)](https://github.com/informalsystems/euc/actions/workflows/unitpacker.yml)                         |
+| junod    | v9.0.0 | junod-v3 | [![status](https://github.com/informalsystems/euc/actions/workflows/unitpacker.yml/badge.svg?branch=junod-v3)](https://github.com/informalsystems/euc/actions/workflows/unitpacker.yml)    |
+| akash    | v0.16.3 | akash-v2 | [![status](https://github.com/informalsystems/euc/actions/workflows/unitpacker.yml/badge.svg)](https://github.com/informalsystems/euc/actions/workflows/unitpacker.yml)                         |
+| ag0      | | | |
+| cheqd-noded | | | |
+| ixod | | | |
+| nomic | | | |
