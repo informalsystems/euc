@@ -4,7 +4,7 @@
 set -eux
 
 # Find (optional) config.json 'network' configuration for custom settings - Output: CHAIN_NAME
-DAEMON_NAME="$(echo "$1" | cut -d- -f1)"
+DAEMON_NAME="$(echo "$1" | sed 's/^\(.*\)-v.*$/\1/')"
 LOCAL_NETWORK_CONFIG="$(jq '.network | map(select(.daemon_name == "'"$DAEMON_NAME"'"))[0]' config.json)"
 if [ "$LOCAL_NETWORK_CONFIG" = "null" ]; then
   CHAIN_NAME="$DAEMON_NAME"
@@ -28,8 +28,8 @@ else
   echo "::debug::Chain file already exists, skipping download."
 fi
 
-# Merge local network configuration with the chain registry file.
-# Change codebase.git_repo to owner/repo from full URL. (Needed for GitHub actions/checkout.)
+# 1. Merge local network configuration with the chain registry file.
+# 2. Change codebase.git_repo to owner/repo from full URL. (Needed for GitHub actions/checkout.)
 if [ "$LOCAL_NETWORK_CONFIG" = "null" ]; then
   COMPILED_NETWORK_CONFIG="${CHAIN_NAME}_chain.json"
 else
@@ -39,8 +39,10 @@ fi
 # Homework: do the string replacement using jq only.
 GIT_REPO="$(echo "$COMPILED_NETWORK_CONFIG" | jq -r '.codebase.git_repo' )"
 GIT_REPO="${GIT_REPO##https://github.com/}"
+GIT_REPO="${GIT_REPO%%/}"
 echo "$COMPILED_NETWORK_CONFIG" | jq ".codebase.git_repo=\"${GIT_REPO}\"" > "${CHAIN_NAME}_compiled_network_config.json"
 
 # Overwrite local network configuration with the compiled local+registry configuration.
-CONFIG="$(jq -s '.[0] + {network: [.[1]]}' config.json "${CHAIN_NAME}_compiled_network_config.json" | tr -d '\n')"
+# Keep only the 'os' and 'network' keys for unitpacker. It will start len(os)*len(network) number of executions.
+CONFIG="$(jq -s '{os: .[0].os} + {network: [.[1]]}' config.json "${CHAIN_NAME}_compiled_network_config.json" | tr -d '\n')"
 echo "::set-output name=config::$CONFIG"

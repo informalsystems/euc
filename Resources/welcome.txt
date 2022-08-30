@@ -1,0 +1,11 @@
+Cosmos Command-Line Interfaces
+
+Install the command-line interface applications of the Cosmos Network (Cosmos Hub, Osmosis, etc) to the computer.
+
+The applications are built publicly and signed by an Apple certificate.
+You can find more information about the process at https://github.com/informalsystems/euc.
+
+This application is provided AS IS, use it at your own risk.
+
+Stake with Cephalopod Equipment, a subsidiary of Informal Systems.
+https://cephalopod.equipment

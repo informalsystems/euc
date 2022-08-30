@@ -1,4 +1,41 @@
 {
+  "package": [
+    {
+      "name": "regen",
+      "build": "v1",
+      "version": "v4.0.0"
+    },
+    {
+      "name": "osmosisd",
+      "build": "v4",
+      "version": "v11.0.0"
+    },
+    {
+      "name": "gaiad",
+      "build": "v1",
+      "version": "v7.0.2"
+    },
+    {
+      "name": "junod",
+      "build": "v3",
+      "version": "v9.0.0"
+    },
+    {
+      "name": "akash",
+      "build": "v2",
+      "version": "v0.16.3"
+    },
+    {
+      "name": "ag0",
+      "build": "v2",
+      "version": "agoric-upgrade-7"
+    },
+    {
+      "name": "cheqd-noded",
+      "build": "v2",
+      "version": "v0.6.0"
+    }
+  ],
   "os": [
     "macos-12",
     "ubuntu-20.04"
@@ -6,10 +43,10 @@
   "network": [
     {
       "daemon_name": "gaiad",
+      "chain_name": "cosmoshub",
       "codebase": {
         "recommended_version": "v7.0.2"
-      },
-      "chain_name": "cosmoshub"
+      }
     },
     {
       "daemon_name": "regen"
@@ -17,6 +54,28 @@
     {
       "daemon_name": "osmosisd",
       "chain_name": "osmosis"
+    },
+    {
+      "daemon_name": "junod",
+      "chain_name": "juno"
+    },
+    {
+      "daemon_name": "akash"
+    },
+    {
+      "daemon_name": "ag0",
+      "chain_name": "agoric"
+    },
+    {
+      "daemon_name": "cheqd-noded",
+      "chain_name": "cheqd"
+    },
+    {
+      "daemon_name": "ixod",
+      "chain_name": "impacthub"
+    },
+    {
+      "daemon_name": "nomic"
     }
   ]
 }

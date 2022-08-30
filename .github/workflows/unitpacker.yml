@@ -52,9 +52,8 @@ name: unitpacker
 on:
   push:
     tags:
-      - "gaiad-*"
-      - "regen-*"
-      - "osmosisd-*"
+      - "*-v*"
+      - "!cosmos-v*"
 
 jobs:
 
@@ -67,9 +66,9 @@ jobs:
       - id: set-config
         run: |
           if [ -n "${ACT+x}" ]; then
-            ./config.sh gaiad-v99.0.1
+            ./compile-unitpacker-config.sh gaiad-v99.0.1
           else
-            ./config.sh "$GITHUB_REF_NAME"
+            ./compile-unitpacker-config.sh "$GITHUB_REF_NAME"
           fi
 
   config-test:

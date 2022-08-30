@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<installer-gui-script minSpecVersion="2">
+
+    <title>Cosmos CLI</title>
+    <background mime-type="image/png" file="cosmos-logo-white.png"/>
+    <background-darkAqua mime-type="image/png" file="cosmos-logo-black.png"/>
+    <product id="network.cosmos" version="{{.COSMOS_VERSION}}"/>
+    <welcome mime-type="text/plain" file="welcome.txt"/>
+    <readme mime-type="text/plain" file="LICENSE"/>
+    <conclusion mime-type="text/plain" file="finished.txt"/>
+
+    <domains enable_anywhere="false"/>
+    <options customize="always" require-scripts="false" hostArchitectures="x86_64,arm64"/>
+
+
+    <choices-outline>
+{{ range .BINARIES }}        <line choice="network.cosmos.{{.}}"/>
+{{ end }}    </choices-outline>
+{{ range .BINARIES }}
+
+    <choice id="network.cosmos.{{.}}" title="{{.}}">
+        <pkg-ref id="network.cosmos.{{.}}">{{.}}.pkg</pkg-ref>
+    </choice>
+
+    <pkg-ref id="network.cosmos.{{.}}">
+        <must-close>
+            <app id="network.cosmos.{{.}}"/>
+        </must-close>
+    </pkg-ref>
+{{ end }}
+
+</installer-gui-script>
