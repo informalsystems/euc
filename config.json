@@ -34,6 +34,11 @@
       "name": "cheqd-noded",
       "build": "v2",
       "version": "v0.6.0"
+    },
+    {
+      "name": "ixod",
+      "build": "v2",
+      "version": "v0.18.1"
     }
   ],
   "os": [
