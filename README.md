@@ -15,7 +15,7 @@ Latest version:
 
 | Name                                                                                          | Status |
 |-----------------------------------------------------------------------------------------------|--------|
-| [cosmos-v8](https://github.com/informalsystems/euc/releases/download/cosmos-v8/cosmos-v8.pkg) | [![status](https://github.com/informalsystems/euc/actions/workflows/appreleaser.yml/badge.svg)](https://github.com/informalsystems/euc/actions/workflows/appreleaser.yml) |
+| [cosmos-v9](https://github.com/informalsystems/euc/releases/download/cosmos-v9/cosmos-v9.pkg) | [![status](https://github.com/informalsystems/euc/actions/workflows/appreleaser.yml/badge.svg)](https://github.com/informalsystems/euc/actions/workflows/appreleaser.yml) |
 
 
 Gathered binaries:
