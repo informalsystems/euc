@@ -48,7 +48,7 @@
 # https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows
 # > Note: An event will not be created when you push more than three tags at once.
 
-name: unitpacker
+name: unitpacker-informal
 on:
   push:
     tags:
@@ -72,7 +72,7 @@ jobs:
           go-version: '>=1.19.0'
 
       - name: Install binary
-        run: go build
+        run: go install
 
       - name: Print binary version
         run: ~/go/bin/multisig version --long
