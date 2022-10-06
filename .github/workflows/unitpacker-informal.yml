@@ -75,7 +75,9 @@ jobs:
         run: go install
 
       - name: Print binary version
-        run: ~/go/bin/multisig version --long
+        run: |
+          ls ~/go/bin
+          ~/go/bin/multisig --version
 
   #     - name: Verify WASM version
   #       id: get-wasm
