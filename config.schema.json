@@ -54,8 +54,34 @@
       },
       "minItems": 1,
       "uniqueItems": true
+    },
+
+    "tools": {
+      "description": "List of tools that can be built",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "description": "name of the tool",
+            "type": "string"
+          },
+          "ref": {
+            "description": "the version number defined in Git tag or branches",
+            "type": "string"
+          },
+          "git_url": {
+            "description": "the git url of the tool",
+            "type": "string"
+          },
+          "required": ["name", "ref", "git_url"]
+        }
+      },
+      "minItems": 1,
+      "uniqueItems": true
     }
   },
+    
 
   "required": ["package", "os", "network"]
 }
