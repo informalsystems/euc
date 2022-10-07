@@ -106,11 +106,11 @@ jobs:
 
       - name: Sign macOS binary
         if: runner.os == 'macOS'
-        run: codesign --timestamp -o runtime --sign "${{ secrets.MAC_APP_CERTIFICATE_CN }}" -v ./${{ matrix.network.daemon_name }}
+        run: codesign --timestamp -o runtime --sign "${{ secrets.MAC_APP_CERTIFICATE_CN }}" -v ./multisig
 
-  #     - name: Verify macOS signature
-  #       if: runner.os == 'macOS'
-  #       run: codesign -v ./${{ matrix.network.daemon_name }}
+      - name: Verify macOS signature
+        if: runner.os == 'macOS'
+        run: codesign -v ./multisig
 
   #     - name: Sign macOS WASM library signature
   #       if: needs.build.outputs.wasm != '' && runner.os == 'macOS'
