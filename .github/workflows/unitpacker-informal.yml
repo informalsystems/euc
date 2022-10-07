@@ -112,7 +112,7 @@ jobs:
         if: runner.os == 'macOS'
         run: |
           codesign -v ./multisig
-          codesign --display --verbose=4 ./go/bin/multisig 2>&1 | grep Authority
+          codesign --display --verbose=4 ./multisig 2>&1 | grep Authority
 
   #     - name: Sign macOS WASM library signature
   #       if: needs.build.outputs.wasm != '' && runner.os == 'macOS'
