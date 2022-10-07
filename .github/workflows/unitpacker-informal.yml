@@ -88,28 +88,25 @@ jobs:
           path: ~/go/bin/multisig*
 
 
-  # sign:
-  #   strategy:
-  #     matrix: ${{ fromJSON(needs.config.outputs.config) }}
-  #   runs-on: ${{ matrix.os }}
-  #   needs:
-  #     - config
-  #     - build
-  #   steps:
+  sign:
+    runs-on: "macos-12"
+    needs:
+      - build
+    steps:
 
-  #     - uses: actions/download-artifact@v3
-  #       with:
-  #         name: ${{ github.run_id }}.${{ matrix.os }}
+      - uses: actions/download-artifact@v3
+        with:
+          name: ${{ github.run_id }}.macos-12
 
-  #     - uses: apple-actions/import-codesign-certs@v1
-  #       if: runner.os == 'macOS'
-  #       with:
-  #         p12-file-base64: ${{ secrets.MAC_APP_CERTIFICATE }}
-  #         p12-password: ${{ secrets.MAC_APP_CERTIFICATE_PASSPHRASE }}
+      - uses: apple-actions/import-codesign-certs@v1
+        if: runner.os == 'macOS'
+        with:
+          p12-file-base64: ${{ secrets.MAC_APP_CERTIFICATE }}
+          p12-password: ${{ secrets.MAC_APP_CERTIFICATE_PASSPHRASE }}
 
-  #     - name: Sign macOS binary
-  #       if: runner.os == 'macOS'
-  #       run: codesign --timestamp -o runtime --sign "${{ secrets.MAC_APP_CERTIFICATE_CN }}" -v ./${{ matrix.network.daemon_name }}
+      - name: Sign macOS binary
+        if: runner.os == 'macOS'
+        run: codesign --timestamp -o runtime --sign "${{ secrets.MAC_APP_CERTIFICATE_CN }}" -v ./${{ matrix.network.daemon_name }}
 
   #     - name: Verify macOS signature
   #       if: runner.os == 'macOS'
