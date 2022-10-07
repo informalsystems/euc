@@ -79,37 +79,13 @@ jobs:
           ls ~/go/bin
           ~/go/bin/multisig --version
 
-  #     - name: Verify WASM version
-  #       id: get-wasm
-  #       run: |
-  #         FOUND=$(~/go/bin/${{ matrix.network.daemon_name }} version --long --output json 2>&1 | jq -r '.build_deps[]|select(.|startswith("github.com/CosmWasm/wasmvm@"))|split("@")[1]')
-  #         if [ "$FOUND" != "" ]; then
-  #           echo "Binary uses version $FOUND of CosmWasmVM."
-  #           echo "::set-output name=wasm::$FOUND"
-  #         else
-  #           echo "No WASM library found."
-  #         fi
-
-  #     # Details: https://developer.apple.com/documentation/xcode/embedding-nonstandard-code-structures-in-a-bundle
-  #     - name: Dynamic RPATH for libwasm library access on MacOS
-  #       if: steps.get-wasm.outputs.wasm != '' && runner.os == 'macOS'
-  #       run: install_name_tool -add_rpath "@executable_path/../lib/${{ matrix.network.daemon_name }}" ~/go/bin/${{ matrix.network.daemon_name }}
-
-  #     #Note: Separating uploads flattens the uploaded data, so we can get rid of paths.
-  #     - uses: actions/upload-artifact@v3
-  #       with:
-  #         name: ${{ github.run_id }}.${{ matrix.os }}
-  #         if-no-files-found: error
-  #         retention-days: 3
-  #         path: ~/go/bin/${{ matrix.network.daemon_name }}*
-
-  #     - uses: actions/upload-artifact@v3
-  #       if: steps.get-wasm.outputs.wasm != ''
-  #       with:
-  #         name: ${{ github.run_id }}.${{ matrix.os }}
-  #         if-no-files-found: error
-  #         retention-days: 3
-  #         path: ~/go/pkg/mod/github.com/\!cosm\!wasm/wasmvm@${{ steps.get-wasm.outputs.wasm }}/api/libwasmvm.*
+      #Note: Separating uploads flattens the uploaded data, so we can get rid of paths.
+      - uses: actions/upload-artifact@v3
+        with:
+          name: ${{ github.run_id }}.${{ matrix.os }}
+          if-no-files-found: error
+          retention-days: 3
+          path: ~/go/bin/multisig*
 
 
   # sign:
