@@ -114,14 +114,6 @@ jobs:
           codesign -v ./multisig
           codesign --display --verbose=4 ./multisig 2>&1 | grep Authority
 
-  #     - name: Sign macOS WASM library signature
-  #       if: needs.build.outputs.wasm != '' && runner.os == 'macOS'
-  #       run: codesign --timestamp --sign "${{ secrets.MAC_APP_CERTIFICATE_CN }}" -v ./libwasmvm.dylib
-
-  #     - name: Verify macOS WASM library signature
-  #       if: needs.build.outputs.wasm != '' && runner.os == 'macOS'
-  #       run: codesign -v ./libwasmvm.dylib
-
   #     - uses: crazy-max/ghaction-import-gpg@v5
   #       if: runner.os == 'Linux'
   #       with:
@@ -162,12 +154,12 @@ jobs:
   #           gpg --verify ./libwasmvm.aarch64.so.asc
   #         fi
 
-  #     - uses: actions/upload-artifact@v3
-  #       with:
-  #         name: ${{ github.run_id }}.${{ matrix.os }}.signed
-  #         if-no-files-found: error
-  #         retention-days: 3
-  #         path: ${{ matrix.network.daemon_name }}*
+      - uses: actions/upload-artifact@v3
+        with:
+          name: ${{ github.run_id }}.macos-12.signed
+          if-no-files-found: error
+          retention-days: 3
+          path: multisig*
 
   #     - uses: actions/upload-artifact@v3
   #       if: needs.build.outputs.wasm != '' && runner.os == 'macOS'
