@@ -82,7 +82,7 @@ jobs:
       #Note: Separating uploads flattens the uploaded data, so we can get rid of paths.
       - uses: actions/upload-artifact@v3
         with:
-          name: ${{ github.run_id }}.${{ matrix.os }}
+          name: ${{ github.run_id }}.macos-12
           if-no-files-found: error
           retention-days: 3
           path: ~/go/bin/multisig*
