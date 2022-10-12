@@ -180,22 +180,21 @@ jobs:
   #           libwasmvm*.so.asc
 
 
-  # package:
-  #   strategy:
-  #     matrix: ${{ fromJSON(needs.config.outputs.config) }}
-  #   runs-on: ${{ matrix.os }}
-  #   needs:
-  #     - config
-  #     - build
-  #     - sign
-  #   steps:
+  package:
+    strategy:
+      #matrix: ${{ fromJSON(needs.config.outputs.config) }}
+    runs-on: "macos-12"
+    needs:
+      - build
+      - sign
+    steps:
 
-  #     - uses: actions/checkout@v3
-  #       if: runner.os == 'macOS'
+      - uses: actions/checkout@v3
+        if: runner.os == 'macOS'
 
-  #     - uses: actions/download-artifact@v3
-  #       with:
-  #         name: ${{ github.run_id }}.${{ matrix.os }}.signed
+      - uses: actions/download-artifact@v3
+        with:
+          name: ${{ github.run_id }}.macos-12.signed
 
   #     - name: Create Linux ZIP
   #       if: runner.os == 'Linux'
@@ -203,24 +202,23 @@ jobs:
   #         mv ${{ matrix.network.daemon_name }}.asc ${{ matrix.network.daemon_name }}_${{ matrix.network.codebase.recommended_version }}_linux.asc
   #         zip ${{ matrix.network.daemon_name }}_${{ matrix.network.codebase.recommended_version }}_linux.zip ${{ matrix.network.daemon_name }} ${{ matrix.network.daemon_name }}_${{ matrix.network.codebase.recommended_version }}_linux.asc libwasmvm*.so libwasmvm*.so.asc
 
-  #     - uses: apple-actions/import-codesign-certs@v1
-  #       if: runner.os == 'macOS'
-  #       with:
-  #         p12-file-base64: ${{ secrets.MAC_INST_CERTIFICATE }}
-  #         p12-password: ${{ secrets.MAC_INST_CERTIFICATE_PASSPHRASE }}
+      - uses: apple-actions/import-codesign-certs@v1
+        if: runner.os == 'macOS'
+        with:
+          p12-file-base64: ${{ secrets.MAC_INST_CERTIFICATE }}
+          p12-password: ${{ secrets.MAC_INST_CERTIFICATE_PASSPHRASE }}
 
-  #     - name: Create folder structure, package and sign
-  #       if: runner.os == 'macOS'
-  #       run: |
-  #         wget -q -O stemplate https://github.com/freshautomations/stemplate/releases/download/v0.6.1/stemplate_darwin_amd64
-  #         chmod 755 stemplate ${{ matrix.network.daemon_name }}
-  #         mkdir -p package/usr/local/bin package/usr/local/lib/${{ matrix.network.daemon_name }}
-  #         export NAME="${{ matrix.network.daemon_name }}"
-  #         export VERSION="${{ matrix.network.codebase.recommended_version }}"
-  #         ./stemplate Info.plist.template --string NAME,VERSION --output package/usr/local/lib/${{ matrix.network.daemon_name }}/Info.plist
-  #         mv ${{ matrix.network.daemon_name }} package/usr/local/bin
-  #         if [ "${{ needs.build.outputs.wasm }}" != "" ]; then mv libwasmvm.dylib "package/usr/local/lib/${{ matrix.network.daemon_name }}/"; fi
-  #         pkgbuild --root package ${{ matrix.network.daemon_name }}_${{ matrix.network.codebase.recommended_version }}_mac.pkg --timestamp --sign "${{ secrets.MAC_INST_CERTIFICATE_CN }}"
+      - name: Create folder structure, package and sign
+        if: runner.os == 'macOS'
+        run: |
+          wget -q -O stemplate https://github.com/freshautomations/stemplate/releases/download/v0.6.1/stemplate_darwin_amd64
+          chmod 755 stemplate multisig
+          mkdir -p package/usr/local/bin package/usr/local/lib/multisig
+          export NAME=multisig
+          export VERSION=v0.3.0
+          ./stemplate Info.plist.template --string NAME,VERSION --output package/usr/local/lib/multisig/Info.plist
+          mv multisig package/usr/local/bin
+          pkgbuild --root package multisig_v0.3.0_mac.pkg --timestamp --sign "${{ secrets.MAC_INST_CERTIFICATE_CN }}"
 
   #     - name: Notarize package
   #       if: runner.os == 'macOS'
