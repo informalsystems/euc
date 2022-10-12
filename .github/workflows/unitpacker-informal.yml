@@ -220,31 +220,31 @@ jobs:
           mv multisig package/usr/local/bin
           pkgbuild --root package multisig_v0.3.0_mac.pkg --timestamp --sign "${{ secrets.MAC_INST_CERTIFICATE_CN }}"
 
-  #     - name: Notarize package
-  #       if: runner.os == 'macOS'
-  #       run: |
-  #         OUT="$(xcrun notarytool submit ${{ matrix.network.daemon_name }}_${{ matrix.network.codebase.recommended_version }}_mac.pkg --wait -f json --apple-id "${{ secrets.MAC_STORE_APPLE_ID }}" --password "${{ secrets.MAC_STORE_APP_SPECIFIC_PASSWORD }}" --team-id "${{ secrets.MAC_STORE_TEAM_ID }}")"
-  #         echo "$OUT"
-  #         STATUS="$(echo "$OUT" | jq -r .status)"
-  #         ID="$(echo "$OUT" | jq -r .id)"
-  #         if [ "$STATUS" != "Accepted" ]; then exit 1 ; fi
-  #         LOG="$(xcrun notarytool log "$ID" --apple-id "${{ secrets.MAC_STORE_APPLE_ID }}" --password "${{ secrets.MAC_STORE_APP_SPECIFIC_PASSWORD }}" --team-id "${{ secrets.MAC_STORE_TEAM_ID }}")"
-  #         echo "$LOG"
-  #         ISSUES="$(echo "$LOG" | jq -r .issues)"
-  #         if [ "$ISSUES" != "null" ]; then exit 1 ; fi
+      - name: Notarize package
+        if: runner.os == 'macOS'
+        run: |
+          OUT="$(xcrun notarytool submit multisig_v0.3.0_mac.pkg --wait -f json --apple-id "${{ secrets.MAC_STORE_APPLE_ID }}" --password "${{ secrets.MAC_STORE_APP_SPECIFIC_PASSWORD }}" --team-id "${{ secrets.MAC_STORE_TEAM_ID }}")"
+          echo "$OUT"
+          STATUS="$(echo "$OUT" | jq -r .status)"
+          ID="$(echo "$OUT" | jq -r .id)"
+          if [ "$STATUS" != "Accepted" ]; then exit 1 ; fi
+          LOG="$(xcrun notarytool log "$ID" --apple-id "${{ secrets.MAC_STORE_APPLE_ID }}" --password "${{ secrets.MAC_STORE_APP_SPECIFIC_PASSWORD }}" --team-id "${{ secrets.MAC_STORE_TEAM_ID }}")"
+          echo "$LOG"
+          ISSUES="$(echo "$LOG" | jq -r .issues)"
+          if [ "$ISSUES" != "null" ]; then exit 1 ; fi
 
-  #     - name: Staple package
-  #       if: runner.os == 'macOS'
-  #       run: |
-  #         xcrun stapler staple ${{ matrix.network.daemon_name }}_${{ matrix.network.codebase.recommended_version }}_mac.pkg
-  #         xcrun stapler validate ${{ matrix.network.daemon_name }}_${{ matrix.network.codebase.recommended_version }}_mac.pkg
+      - name: Staple package
+        if: runner.os == 'macOS'
+        run: |
+          xcrun stapler staple multisig_v0.3.0_mac.pkg
+          xcrun stapler validate multisig_v0.3.0_mac.pkg
 
-  #     - uses: actions/upload-artifact@v3
-  #       with:
-  #         name: ${{ github.run_id }}.${{ matrix.os }}.signed
-  #         if-no-files-found: error
-  #         retention-days: 3
-  #         path: ${{ matrix.network.daemon_name }}_${{ matrix.network.codebase.recommended_version }}*
+      - uses: actions/upload-artifact@v3
+        with:
+          name: ${{ github.run_id }}.macos-12.signed
+          if-no-files-found: error
+          retention-days: 3
+          path: multisig_v0.3.0*
 
   # release:
   #   needs:
