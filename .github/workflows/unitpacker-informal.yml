@@ -59,7 +59,10 @@ on:
 jobs:
 
   build:
-    runs-on: "macos-12"
+    strategy:
+      matrix:
+        os: [macos-12, ubuntu-20.04]
+    runs-on: ${{matrix.os}}
     steps:
 
       - uses: actions/checkout@v3
