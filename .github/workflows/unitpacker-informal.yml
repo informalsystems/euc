@@ -89,7 +89,10 @@ jobs:
 
 
   sign:
-    runs-on: "macos-12" ##
+    strategy:
+      matrix:
+        os: [macos-12, ubuntu-20.04]
+    runs-on: ${{matrix.os}}
     needs:
       - build
     steps:
@@ -114,70 +117,26 @@ jobs:
           codesign -v ./multisig
           codesign --display --verbose=4 ./multisig 2>&1 | grep Authority 
 
-  #     - uses: crazy-max/ghaction-import-gpg@v5
-  #       if: runner.os == 'Linux'
-  #       with:
-  #         gpg_private_key: ${{ secrets.GPG_PRIVATE_KEY }}
-  #         passphrase: ${{ secrets.GPG_PASSPHRASE }}
+      - uses: crazy-max/ghaction-import-gpg@v5
+        if: runner.os == 'Linux'
+        with:
+          gpg_private_key: ${{ secrets.GPG_PRIVATE_KEY }}
+          passphrase: ${{ secrets.GPG_PASSPHRASE }}
 
-  #     - name: Sign Linux binary
-  #       if: runner.os == 'Linux'
-  #       run: gpg --detach-sign --armor ${{ matrix.network.daemon_name }}
+      - name: Sign Linux binary
+        if: runner.os == 'Linux'
+        run: gpg --detach-sign --armor multisig ##
 
-  #     - name: Verify Linux signature
-  #       if: runner.os == 'Linux'
-  #       run: gpg --verify ${{ matrix.network.daemon_name }}.asc
-
-  #     - name: Sign Linux WASM library signature
-  #       if: needs.build.outputs.wasm != '' && runner.os == 'Linux'
-  #       run: |
-  #         if [ -f libwasmvm.so ]; then
-  #           gpg --detach-sign --armor ./libwasmvm.so
-  #         fi
-  #         if [ -f libwasmvm.x86_64.so ]; then
-  #           gpg --detach-sign --armor ./libwasmvm.x86_64.so
-  #         fi
-  #         if [ -f libwasmvm.aarch64.so ]; then
-  #           gpg --detach-sign --armor ./libwasmvm.aarch64.so
-  #         fi
-
-  #     - name: Verify Linux WASM library signature
-  #       if: needs.build.outputs.wasm != '' && runner.os == 'Linux'
-  #       run: |
-  #         if [ -f libwasmvm.so.asc ]; then
-  #           gpg --verify ./libwasmvm.so.asc
-  #         fi
-  #         if [ -f libwasmvm.x86_64.so.asc ]; then
-  #           gpg --verify ./libwasmvm.x86_64.so.asc
-  #         fi
-  #         if [ -f libwasmvm.aarch64.so.asc ]; then
-  #           gpg --verify ./libwasmvm.aarch64.so.asc
-  #         fi
+      - name: Verify Linux signature
+        if: runner.os == 'Linux'
+        run: gpg --verify multisig.asc ##
 
       - uses: actions/upload-artifact@v3
         with:
-          name: ${{ github.run_id }}.macos-12.signed
+          name: ${{ github.run_id }}.${{ matrix.os }}.signed
           if-no-files-found: error
           retention-days: 3
           path: multisig*
-
-  #     - uses: actions/upload-artifact@v3
-  #       if: needs.build.outputs.wasm != '' && runner.os == 'macOS'
-  #       with:
-  #         name: ${{ github.run_id }}.${{ matrix.os }}.signed
-  #         if-no-files-found: error
-  #         retention-days: 3
-  #         path: libwasmvm.dylib
-
-  #     - uses: actions/upload-artifact@v3
-  #       if: needs.build.outputs.wasm != '' && runner.os == 'Linux'
-  #       with:
-  #         name: ${{ github.run_id }}.${{ matrix.os }}.signed
-  #         if-no-files-found: error
-  #         retention-days: 3
-  #         path: |
-  #           libwasmvm*.so
-  #           libwasmvm*.so.asc
 
 
   package:
