@@ -140,9 +140,10 @@ jobs:
 
 
   package:
-    # strategy:
-      #matrix: ${{ fromJSON(needs.config.outputs.config) }}
-    runs-on: "macos-12"
+    strategy:
+      matrix: 
+        os: [macos-12, ubuntu-20.04]
+    runs-on: ${{ matrix.os }}
     needs:
       - build
       - sign
@@ -153,13 +154,13 @@ jobs:
 
       - uses: actions/download-artifact@v3
         with:
-          name: ${{ github.run_id }}.macos-12.signed
+          name: ${{ github.run_id }}.${{ matrix.os }}.signed
 
-  #     - name: Create Linux ZIP
-  #       if: runner.os == 'Linux'
-  #       run: |
-  #         mv ${{ matrix.network.daemon_name }}.asc ${{ matrix.network.daemon_name }}_${{ matrix.network.codebase.recommended_version }}_linux.asc
-  #         zip ${{ matrix.network.daemon_name }}_${{ matrix.network.codebase.recommended_version }}_linux.zip ${{ matrix.network.daemon_name }} ${{ matrix.network.daemon_name }}_${{ matrix.network.codebase.recommended_version }}_linux.asc libwasmvm*.so libwasmvm*.so.asc
+      - name: Create Linux ZIP
+        if: runner.os == 'Linux'
+        run: | ##name and version
+          mv multisig.asc multisig_v0.3.0_linux.asc
+          zip multisig_v0.3.0_linux.zip multisig multisig_v0.3.0_linux.asc
 
       - uses: apple-actions/import-codesign-certs@v1
         if: runner.os == 'macOS'
