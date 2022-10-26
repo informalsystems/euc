@@ -1,0 +1,230 @@
+# Required secrets in GitHub:
+###
+###
+# MAC_APP_CERTIFICATE - Developer ID Application certificate, private key and CA certificate.
+# Export these three items from your Mac's local keystore:
+# * Your (encrypted) private key corresponding to your Developer ID Application certificate
+# * Your Apple Developer ID Application Certificate
+# * Apple's "Developer ID Certification Authority" root certificate.
+# Base64-encode the resulting p12 file and paste the string in this secret.
+# The Application signing identity is used to sign individual files.
+###
+# MAC_APP_CERTIFICATE_PASSPHRASE - passphrase for the MAC_APP_CERTIFICATE private key
+# The passphrase that you used to encrypt your private key during the export.
+###
+# MAC_APP_CERTIFICATE_CN - common name on the MAC_APP_CERTIFICATE
+# This looks something like this: "Developer ID Application: <Your name or company name> (<TeamID>)"
+# If it does not start with "Developer ID Application: " it is the incorrect certificate or name.
+###
+###
+# MAC_INST_CERTIFICATE - Developer ID Installer certificate and private key.
+# Export these two items from your Mac's local keystore:
+# * Your (encrypted) private key corresponding to your Developer ID Installer certificate
+# * Your Apple Developer ID Installer Certificate
+# Base64-encode the resulting p12 file and paste the string in this secret.
+# The Installer signing identity is used to sign packages.
+###
+# MAC_INST_CERTIFICATE_PASSPHRASE - passphrase for the MAC_INST_CERTIFICATE private key
+# The passphrase that you used to encrypt your private key during the export.
+###
+# MAC_INST_CERTIFICATE_CN - common name on the MAC_INST_CERTIFICATE
+# This looks something like this: "Developer ID Installer: <Your name or company name> (<TeamID>)"
+# If it does not start with "Developer ID Installer: " it is the incorrect certificate or name.
+###
+###
+# MAC_STORE_APPLE_ID - Apple ID of the user requesting notarization
+# Usually an e-mail address.
+###
+# MAC_STORE_APP_SPECIFIC_PASSWORD - Application specific password of the user requesting notarization.
+# You can request an app-specific password for your Apple ID user at https://appleid.apple.com
+###
+# MAC_STORE_TEAM_ID - Team ID of the user or organization
+# This is the same 10 characters that are displayed in your certificate CN at the end in brackets.
+###
+# GPG_PRIVATE_KEY - PGP private key block for Linux signing
+# GPG_PASSPHRASE - passphrase for the GPG_PRIVATE_KEY
+##
+
+# https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows
+# > Note: An event will not be created when you push more than three tags at once.
+
+name: unitpacker-informal
+on:
+  push:
+    tags:
+      - "multisig-v*"
+    branches:
+      - HS/Add-Multisig
+
+jobs:
+
+  build:
+    strategy:
+      matrix:
+        os: [macos-12, ubuntu-20.04]
+    runs-on: ${{matrix.os}}
+    steps:
+
+      - uses: actions/checkout@v3
+        with:
+          repository: "informalsystems/multisig" ##
+          ref: "v0.3.0"
+
+      - uses: actions/setup-go@v3
+        with:
+          go-version: '>=1.19.0'
+
+      - name: Install binary
+        run: go install
+
+      - name: Print binary version
+        run: ~/go/bin/multisig --version ##
+
+      - uses: actions/upload-artifact@v3
+        with:
+          name: ${{ github.run_id }}.${{ matrix.os }} ##
+          if-no-files-found: error
+          retention-days: 3
+          path: ~/go/bin/multisig* ##
+
+
+  sign:
+    strategy:
+      matrix:
+        os: [macos-12, ubuntu-20.04]
+    runs-on: ${{matrix.os}}
+    needs:
+      - build
+    steps:
+
+      - uses: actions/download-artifact@v3
+        with:
+          name: ${{ github.run_id }}.macos-12 ##
+
+      - uses: apple-actions/import-codesign-certs@v1
+        if: runner.os == 'macOS'
+        with:
+          p12-file-base64: ${{ secrets.MAC_APP_CERTIFICATE }}
+          p12-password: ${{ secrets.MAC_APP_CERTIFICATE_PASSPHRASE }}
+
+      - name: Sign macOS binary
+        if: runner.os == 'macOS'
+        run: codesign --timestamp -o runtime --sign "${{ secrets.MAC_APP_CERTIFICATE_CN }}" -v ./multisig ##
+
+      - name: Verify macOS signature
+        if: runner.os == 'macOS'
+        run: | ##
+          codesign -v ./multisig
+          codesign --display --verbose=4 ./multisig 2>&1 | grep Authority 
+
+      - uses: crazy-max/ghaction-import-gpg@v5
+        if: runner.os == 'Linux'
+        with:
+          gpg_private_key: ${{ secrets.GPG_PRIVATE_KEY }}
+          passphrase: ${{ secrets.GPG_PASSPHRASE }}
+
+      - name: Sign Linux binary
+        if: runner.os == 'Linux'
+        run: gpg --detach-sign --armor multisig ##
+
+      - name: Verify Linux signature
+        if: runner.os == 'Linux'
+        run: gpg --verify multisig.asc ##
+
+      - uses: actions/upload-artifact@v3
+        with:
+          name: ${{ github.run_id }}.${{ matrix.os }}.signed
+          if-no-files-found: error
+          retention-days: 3
+          path: multisig*
+
+
+  package:
+    strategy:
+      matrix: 
+        os: [macos-12, ubuntu-20.04]
+    runs-on: ${{ matrix.os }}
+    needs:
+      - build
+      - sign
+    steps:
+
+      - uses: actions/checkout@v3
+        if: runner.os == 'macOS'
+
+      - uses: actions/download-artifact@v3
+        with:
+          name: ${{ github.run_id }}.${{ matrix.os }}.signed
+
+      - name: Create Linux ZIP
+        if: runner.os == 'Linux'
+        run: | ##name and version
+          mv multisig.asc multisig_v0.3.0_linux.asc
+          zip multisig_v0.3.0_linux.zip multisig multisig_v0.3.0_linux.asc
+
+      - uses: apple-actions/import-codesign-certs@v1
+        if: runner.os == 'macOS'
+        with:
+          p12-file-base64: ${{ secrets.MAC_INST_CERTIFICATE }}
+          p12-password: ${{ secrets.MAC_INST_CERTIFICATE_PASSPHRASE }}
+
+      - name: Create folder structure, package and sign
+        if: runner.os == 'macOS'
+        run: |
+          wget -q -O stemplate https://github.com/freshautomations/stemplate/releases/download/v0.6.1/stemplate_darwin_amd64
+          chmod 755 stemplate multisig
+          mkdir -p package/usr/local/bin package/usr/local/lib/multisig
+          export NAME=multisig
+          export VERSION=v0.3.0
+          ./stemplate Info.plist.template --string NAME,VERSION --output package/usr/local/lib/multisig/Info.plist
+          mv multisig package/usr/local/bin
+          pkgbuild --root package multisig_v0.3.0_mac.pkg --timestamp --sign "${{ secrets.MAC_INST_CERTIFICATE_CN }}"
+
+      - name: Notarize package
+        if: runner.os == 'macOS'
+        run: |
+          OUT="$(xcrun notarytool submit multisig_v0.3.0_mac.pkg --wait -f json --apple-id "${{ secrets.MAC_STORE_APPLE_ID }}" --password "${{ secrets.MAC_STORE_APP_SPECIFIC_PASSWORD }}" --team-id "${{ secrets.MAC_STORE_TEAM_ID }}")"
+          echo "$OUT"
+          STATUS="$(echo "$OUT" | jq -r .status)"
+          ID="$(echo "$OUT" | jq -r .id)"
+          if [ "$STATUS" != "Accepted" ]; then exit 1 ; fi
+          LOG="$(xcrun notarytool log "$ID" --apple-id "${{ secrets.MAC_STORE_APPLE_ID }}" --password "${{ secrets.MAC_STORE_APP_SPECIFIC_PASSWORD }}" --team-id "${{ secrets.MAC_STORE_TEAM_ID }}")"
+          echo "$LOG"
+          ISSUES="$(echo "$LOG" | jq -r .issues)"
+          if [ "$ISSUES" != "null" ]; then exit 1 ; fi
+
+      - name: Staple package
+        if: runner.os == 'macOS'
+        run: |
+          xcrun stapler staple multisig_v0.3.0_mac.pkg
+          xcrun stapler validate multisig_v0.3.0_mac.pkg
+
+      - uses: actions/upload-artifact@v3
+        with:
+          name: ${{ github.run_id }}.macos-12.signed
+          if-no-files-found: error
+          retention-days: 3
+          path: multisig_v0.3.0*
+
+  # release:
+  #   needs:
+  #     - config
+  #     - package
+  #   runs-on: ubuntu-latest
+  #   steps:
+
+  #     - uses: actions/download-artifact@v3
+  #       with:
+  #         name: ${{ github.run_id }}.${{ fromJSON(needs.config.outputs.config).os[0] }}.signed
+
+  #     - uses: actions/download-artifact@v3
+  #       with:
+  #         name: ${{ github.run_id }}.${{ fromJSON(needs.config.outputs.config).os[1] }}.signed
+
+  #     - uses: softprops/action-gh-release@v1
+  #       if: startsWith(github.ref, 'refs/tags/')
+  #       with:
+  #         fail_on_unmatched_files: true
+  #         files: |
+  #           ${{ fromJSON(needs.config.outputs.config).network[0].daemon_name }}_${{ fromJSON(needs.config.outputs.config).network[0].codebase.recommended_version }}_mac.pkg
+  #           ${{ fromJSON(needs.config.outputs.config).network[0].daemon_name }}_${{ fromJSON(needs.config.outputs.config).network[0].codebase.recommended_version }}_linux.zip
