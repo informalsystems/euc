@@ -48,7 +48,7 @@
 # https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows
 # > Note: An event will not be created when you push more than three tags at once.
 
-name: unitpacker-informal
+name: unitpacker-go
 on:
   push:
     tags:
@@ -207,9 +207,6 @@ jobs:
           path: multisig_v0.3.0*
 
   release:
-    strategy:
-      matrix:
-        os: [macos-12, ubuntu-20.04]
     needs:
       # - config
       - package
@@ -218,11 +215,12 @@ jobs:
 
       - uses: actions/download-artifact@v3
         with:
-          name: ${{ github.run_id }}.${{ matrix.os[0] }}.signed
+          name: ${{ github.run_id }}.macos-12.signed
+            
 
       - uses: actions/download-artifact@v3
         with:
-          name: ${{ github.run_id }}.${{ matrix.os[1] }}.signed
+          name: ${{ github.run_id }}.ubuntu-20.04.signed
 
       - uses: softprops/action-gh-release@v1
         if: startsWith(github.ref, 'refs/tags/')
