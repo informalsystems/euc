@@ -53,6 +53,8 @@ on:
   push:
     tags:
       - "multisig-v*"
+    branches:
+      - "HS/Add-Multisig"
 
 jobs:
 
