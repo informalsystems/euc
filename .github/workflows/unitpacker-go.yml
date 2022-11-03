@@ -58,6 +58,32 @@ on:
 
 jobs:
 
+  config:
+    runs-on: ubuntu-latest
+    outputs:
+      config: ${{ steps.set-config.outputs.config }}
+    steps:
+      - uses: actions/checkout@v3
+      - id: set-config
+        run: |
+          if [ -n "${ACT+x}" ]; then
+            ./compile-unitpacker-config.sh gaiad-v99.0.1
+          else
+            ./compile-unitpacker-config-tools.sh "$GITHUB_REF_NAME"
+          fi
+
+  config-test:
+    needs: config
+    strategy:
+      matrix: ${{fromJSON(needs.config.outputs.config)}}
+    runs-on: ${{matrix.os}}
+    steps:
+      - run: |
+          echo "hello world"
+          echo "Tool name: ${{matrix.tools.name}}"
+          echo "Version: ${{matrix.tools.version}}"
+          echo "Git repo: ${{matrix.tools.git_url}}"
+
   build:
     strategy:
       matrix:
