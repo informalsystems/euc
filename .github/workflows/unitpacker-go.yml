@@ -186,7 +186,7 @@ jobs:
         if: runner.os == 'Linux'
         run: |
           mv ${{ matrix.tools.name }}.asc ${{ matrix.tools.name }}_${{ matrix.tools.ref }}_linux.asc
-          zip ${{ matrix.tools.name }}_${{ matrix.name.ref }}_linux.zip ${{ matrix.tools.name }} ${{ matrix.tools.name }}_${{ matrix.tools.ref }}_linux.asc
+          zip ${{ matrix.tools.name }}_${{ matrix.tools.ref }}_linux.zip ${{ matrix.tools.name }} ${{ matrix.tools.name }}_${{ matrix.tools.ref }}_linux.asc
 
       - uses: apple-actions/import-codesign-certs@v1
         if: runner.os == 'macOS'
