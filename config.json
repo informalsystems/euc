@@ -87,7 +87,7 @@
     {
       "name": "multisig",
       "ref": "v0.3.0",
-      "git_url": "https://github.com/informalsystems/multisig"
+      "git_url": "informalsystems/multisig"
 
     }
 
