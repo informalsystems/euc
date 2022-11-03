@@ -251,5 +251,5 @@ jobs:
         with:
           fail_on_unmatched_files: true
           files: |
-            ${{ fromJSON(needs.config.outputs.config).tools.name }}_${{ fromJSON(needs.config.outputs.config).tools.ref }}_mac.pkg
-            ${{ fromJSON(needs.config.outputs.config).tools.name }}_${{ fromJSON(needs.config.outputs.config).tools.ref }}_linux.zip
+            ${{ fromJSON(needs.config.outputs.config).tools[0].name }}_${{ fromJSON(needs.config.outputs.config).tools[0].ref }}_mac.pkg
+            ${{ fromJSON(needs.config.outputs.config).tools[0].name }}_${{ fromJSON(needs.config.outputs.config).tools[0].ref }}_linux.zip
