@@ -85,6 +85,7 @@ jobs:
           echo "Git repo: ${{matrix.tools.git_url}}"
 
   build:
+    needs: config
     strategy:
       matrix: ${{ fromJSON(needs.config.outputs.config) }}
     runs-on: ${{matrix.os}}
@@ -118,6 +119,7 @@ jobs:
       matrix: ${{ fromJSON(needs.config.outputs.config) }}
     runs-on: ${{matrix.os}}
     needs:
+      - config
       - build
     steps:
 
@@ -168,6 +170,7 @@ jobs:
       matrix: ${{ fromJSON(needs.config.outputs.config) }}
     runs-on: ${{ matrix.os }}
     needs:
+      - config
       - build
       - sign
     steps:
@@ -181,7 +184,7 @@ jobs:
 
       - name: Create Linux ZIP
         if: runner.os == 'Linux'
-        run: | ##name and version
+        run: |
           mv ${{ matrix.tools.name }}.asc ${{ matrix.tools.name }}_${{ matrix.tools.ref }}_linux.asc
           zip ${{ matrix.tools.name }}_${{ matrix.name.ref }}_linux.zip ${{ matrix.tools.name }} ${{ matrix.tools.name }}_${{ matrix.tools.ref }}_linux.asc
 
