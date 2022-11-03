@@ -81,20 +81,19 @@ jobs:
       - run: |
           echo "hello world"
           echo "Tool name: ${{matrix.tools.name}}"
-          echo "Version: ${{matrix.tools.version}}"
+          echo "Version: ${{matrix.tools.ref}}"
           echo "Git repo: ${{matrix.tools.git_url}}"
 
   build:
     strategy:
-      matrix:
-        os: [macos-12, ubuntu-20.04]
+      matrix: ${{ fromJSON(needs.config.outputs.config) }}
     runs-on: ${{matrix.os}}
     steps:
 
       - uses: actions/checkout@v3
         with:
-          repository: "informalsystems/multisig" ##
-          ref: "v0.3.0"
+          repository: ${{ matrix.tools.git_url }}
+          ref: ${{ matrix.tools.ref }}
 
       - uses: actions/setup-go@v3
         with:
@@ -104,20 +103,19 @@ jobs:
         run: go install
 
       - name: Print binary version
-        run: ~/go/bin/multisig --version ##
+        run: ~/go/bin/${{ matrix.tools.ref }} --version
 
       - uses: actions/upload-artifact@v3
         with:
-          name: ${{ github.run_id }}.${{ matrix.os }} ##
+          name: ${{ github.run_id }}.${{ matrix.os }}
           if-no-files-found: error
           retention-days: 3
-          path: ~/go/bin/multisig* ##
+          path: ~/go/bin/${{ matrix.tools.name }}
 
 
   sign:
     strategy:
-      matrix:
-        os: [macos-12, ubuntu-20.04]
+      matrix: ${{ fromJSON(needs.config.outputs.config) }}
     runs-on: ${{matrix.os}}
     needs:
       - build
@@ -125,7 +123,7 @@ jobs:
 
       - uses: actions/download-artifact@v3
         with:
-          name: ${{ github.run_id }}.macos-12 ##
+          name: ${{ github.run_id }}.${{ matrix.os }}
 
       - uses: apple-actions/import-codesign-certs@v1
         if: runner.os == 'macOS'
@@ -135,13 +133,13 @@ jobs:
 
       - name: Sign macOS binary
         if: runner.os == 'macOS'
-        run: codesign --timestamp -o runtime --sign "${{ secrets.MAC_APP_CERTIFICATE_CN }}" -v ./multisig ##
+        run: codesign --timestamp -o runtime --sign "${{ secrets.MAC_APP_CERTIFICATE_CN }}" -v ./${{ matrix.tools.name }}
 
       - name: Verify macOS signature
         if: runner.os == 'macOS'
         run: | ##
-          codesign -v ./multisig
-          codesign --display --verbose=4 ./multisig 2>&1 | grep Authority 
+          codesign -v ./${{ matrix.tools.name }}
+          codesign --display --verbose=4 ./${{ matrix.tools.name }} 2>&1 | grep Authority 
 
       - uses: crazy-max/ghaction-import-gpg@v5
         if: runner.os == 'Linux'
@@ -151,24 +149,23 @@ jobs:
 
       - name: Sign Linux binary
         if: runner.os == 'Linux'
-        run: gpg --detach-sign --armor multisig ##
+        run: gpg --detach-sign --armor ${{ matrix.tools.name }}
 
       - name: Verify Linux signature
         if: runner.os == 'Linux'
-        run: gpg --verify multisig.asc ##
+        run: gpg --verify ${{ matrix.tools.name }}.asc
 
       - uses: actions/upload-artifact@v3
         with:
           name: ${{ github.run_id }}.${{ matrix.os }}.signed
           if-no-files-found: error
           retention-days: 3
-          path: multisig*
+          path: ${{ matrix.tools.name }}*
 
 
   package:
     strategy:
-      matrix: 
-        os: [macos-12, ubuntu-20.04]
+      matrix: ${{ fromJSON(needs.config.outputs.config) }}
     runs-on: ${{ matrix.os }}
     needs:
       - build
@@ -185,8 +182,8 @@ jobs:
       - name: Create Linux ZIP
         if: runner.os == 'Linux'
         run: | ##name and version
-          mv multisig.asc multisig_v0.3.0_linux.asc
-          zip multisig_v0.3.0_linux.zip multisig multisig_v0.3.0_linux.asc
+          mv ${{ matrix.tools.name }}.asc ${{ matrix.tools.name }}_${{ matrix.tools.ref }}_linux.asc
+          zip ${{ matrix.tools.name }}_${{ tools.name.ref }}_linux.zip ${{ matrix.tools.name }} ${{ matrix.tools.name }}_${{ matrix.tools.ref }}_linux.asc
 
       - uses: apple-actions/import-codesign-certs@v1
         if: runner.os == 'macOS'
@@ -199,17 +196,17 @@ jobs:
         run: |
           wget -q -O stemplate https://github.com/freshautomations/stemplate/releases/download/v0.6.1/stemplate_darwin_amd64
           chmod 755 stemplate multisig
-          mkdir -p package/usr/local/bin package/usr/local/lib/multisig
-          export NAME=multisig
-          export VERSION=v0.3.0
-          ./stemplate Info.plist.template --string NAME,VERSION --output package/usr/local/lib/multisig/Info.plist
-          mv multisig package/usr/local/bin
-          pkgbuild --root package multisig_v0.3.0_mac.pkg --timestamp --sign "${{ secrets.MAC_INST_CERTIFICATE_CN }}"
+          mkdir -p package/usr/local/bin package/usr/local/lib/${{ matrix.tools.name }}
+          export NAME=${{ matrix.tools.name }}
+          export VERSION=${{ matrix.tools.ref }}
+          ./stemplate Info.plist.template --string NAME,VERSION --output package/usr/local/lib/${{ matrix.tools.name }}/Info.plist
+          mv ${{ matrix.tools.name }} package/usr/local/bin
+          pkgbuild --root package ${{ matrix.tools.name }}_${{ matrix.tools.ref }}_mac.pkg --timestamp --sign "${{ secrets.MAC_INST_CERTIFICATE_CN }}"
 
       - name: Notarize package
         if: runner.os == 'macOS'
         run: |
-          OUT="$(xcrun notarytool submit multisig_v0.3.0_mac.pkg --wait -f json --apple-id "${{ secrets.MAC_STORE_APPLE_ID }}" --password "${{ secrets.MAC_STORE_APP_SPECIFIC_PASSWORD }}" --team-id "${{ secrets.MAC_STORE_TEAM_ID }}")"
+          OUT="$(xcrun notarytool submit ${{ matrix.tools.name }}_${{ matrix.tools.ref }}_mac.pkg --wait -f json --apple-id "${{ secrets.MAC_STORE_APPLE_ID }}" --password "${{ secrets.MAC_STORE_APP_SPECIFIC_PASSWORD }}" --team-id "${{ secrets.MAC_STORE_TEAM_ID }}")"
           echo "$OUT"
           STATUS="$(echo "$OUT" | jq -r .status)"
           ID="$(echo "$OUT" | jq -r .id)"
@@ -222,36 +219,36 @@ jobs:
       - name: Staple package
         if: runner.os == 'macOS'
         run: |
-          xcrun stapler staple multisig_v0.3.0_mac.pkg
-          xcrun stapler validate multisig_v0.3.0_mac.pkg
+          xcrun stapler staple ${{ matrix.tools.name }}_${{ matrix.tools.ref }}_mac.pkg
+          xcrun stapler validate ${{ matrix.tools.name }}_${{ matrix.tools.ref }}_mac.pkg
 
       - uses: actions/upload-artifact@v3
         with:
           name: ${{ github.run_id }}.macos-12.signed
           if-no-files-found: error
           retention-days: 3
-          path: multisig_v0.3.0*
+          path: ${{ matrix.tools.name }}_${{ matrix.tools.ref }}*
 
   release:
     needs:
-      # - config
+      - config
       - package
     runs-on: ubuntu-latest
     steps:
 
       - uses: actions/download-artifact@v3
         with:
-          name: ${{ github.run_id }}.macos-12.signed
+          name: ${{ github.run_id }}.${{ fromJSON(needs.config.outputs.config).os[0] }}.signed
             
 
       - uses: actions/download-artifact@v3
         with:
-          name: ${{ github.run_id }}.ubuntu-20.04.signed
+          name: ${{ github.run_id }}.${{ fromJSON(needs.config.outputs.config).os[1] }}.signed
 
       - uses: softprops/action-gh-release@v1
         if: startsWith(github.ref, 'refs/tags/')
         with:
           fail_on_unmatched_files: true
           files: |
-            multisig_v0.3.0_mac.pkg
-            multisig_v0.3.0_linux.zip
+            ${{ fromJSON(needs.config.outputs.config).tools.name }}_${{ fromJSON(needs.config.outputs.config).tools.ref }}_mac.pkg
+            ${{ fromJSON(needs.config.outputs.config).tools.name }}_${{ fromJSON(needs.config.outputs.config).tools.ref }}_linux.zip
