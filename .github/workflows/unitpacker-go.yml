@@ -54,7 +54,7 @@ on:
     tags:
       - "multisig-v*"
     branches:
-      - HS/Add-Multisig
+      - "HS/Add-Multisig"
 
 jobs:
 
