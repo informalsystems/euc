@@ -88,7 +88,6 @@
       "name": "multisig",
       "ref": "v0.3.0",
       "git_url": "informalsystems/multisig"
-
     }
 
   ]
