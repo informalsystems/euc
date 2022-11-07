@@ -109,7 +109,7 @@ jobs:
           name: ${{ github.run_id }}.${{ matrix.os }}
           if-no-files-found: error
           retention-days: 3
-          path: ~/go/bin/${{ matrix.tools.name }}
+          path: ~/go/bin/${{ matrix.tools.name }}*
 
 
   sign:
@@ -137,9 +137,8 @@ jobs:
 
       - name: Verify macOS signature
         if: runner.os == 'macOS'
-        run: | ##
+        run: | 
           codesign -v ./${{ matrix.tools.name }}
-          codesign --display --verbose=4 ./${{ matrix.tools.name }} 2>&1 | grep Authority 
 
       - uses: crazy-max/ghaction-import-gpg@v5
         if: runner.os == 'Linux'
@@ -225,7 +224,7 @@ jobs:
 
       - uses: actions/upload-artifact@v3
         with:
-          name: ${{ github.run_id }}.macos-12.signed
+          name: ${{ github.run_id }}.${{ matrix.os }}.signed
           if-no-files-found: error
           retention-days: 3
           path: ${{ matrix.tools.name }}_${{ matrix.tools.ref }}*
