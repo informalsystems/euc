@@ -63,12 +63,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - id: set-config
-        run: |
-          if [ -n "${ACT+x}" ]; then
-            ./compile-unitpacker-config.sh gaiad-v99.0.1
-          else
-            ./compile-unitpacker-config-tools.sh "$GITHUB_REF_NAME"
-          fi
+        run: ./compile-unitpacker-config-tools.sh "$GITHUB_REF_NAME"
 
   config-test:
     needs: config
