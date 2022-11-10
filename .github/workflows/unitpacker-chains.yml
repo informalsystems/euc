@@ -54,6 +54,7 @@ on:
     tags:
       - "*-v*"
       - "!cosmos-v*"
+      - "!multisig-v*"
 
 jobs:
 

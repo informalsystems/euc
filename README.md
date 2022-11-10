@@ -13,9 +13,9 @@ Currently, only Intel-based macOS computers are supported.
 
 Latest version:
 
-| Cosmos CLI v9                                                                                                                                                                                                                                       | Status |
+| Cosmos CLI v10                                                                                                                                                                                                                                       | Status |
 |-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|--------|
-| [Download<br>![Cosmos](https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fcryptopedia.gr%2Fwp-content%2Fuploads%2FCosmos_avatar-192x192.jpg&f=1&nofb=1)](https://github.com/informalsystems/euc/releases/download/cosmos-v9/cosmos-v9.pkg) | [![status](https://github.com/informalsystems/euc/actions/workflows/appreleaser.yml/badge.svg)](https://github.com/informalsystems/euc/actions/workflows/appreleaser.yml) |
+| [Download<br>![Cosmos](https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fcryptopedia.gr%2Fwp-content%2Fuploads%2FCosmos_avatar-192x192.jpg&f=1&nofb=1)](https://github.com/informalsystems/euc/releases/download/cosmos-v10/cosmos-v10.pkg) | [![status](https://github.com/informalsystems/euc/actions/workflows/appreleaser.yml/badge.svg)](https://github.com/informalsystems/euc/actions/workflows/appreleaser.yml) |
 
 
 Gathered binaries:
@@ -31,3 +31,4 @@ Gathered binaries:
 | cheqd-noded | v0.6.0           | cheqd-noded-v2 | [![status](https://github.com/informalsystems/euc/actions/workflows/unitpacker.yml/badge.svg?branch=cheqd-noded-v2)](https://github.com/informalsystems/euc/actions/workflows/unitpacker.yml) |  |
 | ixod        | v0.18.1          | ixod-v2        | [![unitpacker](https://github.com/informalsystems/euc/actions/workflows/unitpacker.yml/badge.svg?branch=ixod-v2)](https://github.com/informalsystems/euc/actions/workflows/unitpacker.yml)    |  |
 | nomic       | develop          | nomic-v2       | [![status](https://github.com/informalsystems/euc/actions/workflows/unitpacker.yml/badge.svg?branch=nomic-v2)](https://github.com/informalsystems/euc/actions/workflows/unitpacker.yml)       | The Rust build process is not supported yet. |
+| multisig     | v0.3.0          | multisig-v1    | [![status](https://github.com/informalsystems/euc/actions/workflows/unitpacker-go.yml/badge.svg?branch=multisig-v1)](https://github.com/informalsystems/euc/actions/workflows/unitpacker-go.yml)  |  |
