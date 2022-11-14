@@ -242,10 +242,10 @@ jobs:
         with:
           name: ${{ github.run_id }}.${{ fromJSON(needs.config.outputs.config).os[1] }}.signed
 
-      - uses: softprops/action-gh-release@v1
-        if: startsWith(github.ref, 'refs/tags/')
-        with:
-          fail_on_unmatched_files: true
-          files: |
-            ${{ fromJSON(needs.config.outputs.config).tools[0].name }}_${{ fromJSON(needs.config.outputs.config).tools[0].ref }}_mac.pkg
-            ${{ fromJSON(needs.config.outputs.config).tools[0].name }}_${{ fromJSON(needs.config.outputs.config).tools[0].ref }}_linux.zip
+      # - uses: softprops/action-gh-release@v1
+      #   if: startsWith(github.ref, 'refs/tags/')
+      #   with:
+      #     fail_on_unmatched_files: true
+      #     files: |
+      #       ${{ fromJSON(needs.config.outputs.config).tools[0].name }}_${{ fromJSON(needs.config.outputs.config).tools[0].ref }}_mac.pkg
+      #       ${{ fromJSON(needs.config.outputs.config).tools[0].name }}_${{ fromJSON(needs.config.outputs.config).tools[0].ref }}_linux.zip
