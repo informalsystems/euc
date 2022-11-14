@@ -53,6 +53,8 @@ on:
   push:
     tags:
       - "multisig-v*"
+    branches:
+      - "hs/version-issue"
 
 jobs:
 
@@ -196,7 +198,7 @@ jobs:
           export VERSION=${{ matrix.tools.ref }}
           ./stemplate Info.plist.template --string NAME,VERSION --output package/usr/local/lib/${{ matrix.tools.name }}/Info.plist
           mv ${{ matrix.tools.name }} package/usr/local/bin
-          pkgbuild --root package ${{ matrix.tools.name }}_${{ matrix.tools.ref }}_mac.pkg --timestamp --sign "${{ secrets.MAC_INST_CERTIFICATE_CN }}"
+          pkgbuild --root package ${{ matrix.tools.name }}_${{ matrix.tools.ref }}_mac.pkg --version ${{ matrix.tools.ref }} --timestamp --sign "${{ secrets.MAC_INST_CERTIFICATE_CN }}"
 
       - name: Notarize package
         if: runner.os == 'macOS'
