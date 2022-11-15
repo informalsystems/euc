@@ -8,5 +8,5 @@ TOOL_CONFIG="$(jq '.tools | map(select(.name == "'"$TOOL_NAME"'"))[0]' config.js
 echo "$TOOL_CONFIG" > "${TOOL_NAME}_config.json"
 
 # Get the 'os' and 'tool' for unitpacker.
-CONFIG="$(jq -s '{os: .[0].os} + {tools: [.[1]]}' config.json "${TOOL_NAME}_config.json" | tr -d '\n')"
+CONFIG="$(jq -s '{os: .[0].os} + {tools: [.[0]]}' config.json "${TOOL_NAME}_config.json" | tr -d '\n')"
 echo "::set-output name=config::$CONFIG"
