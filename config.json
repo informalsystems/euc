@@ -96,7 +96,6 @@
       "daemon_name": "injectived",
       "chain_name": "injective",
       "codebase": {
-        "recommended_version": "v1.7",
         "git_repo": "InjectiveLabs/injective-core"
       }
     }
