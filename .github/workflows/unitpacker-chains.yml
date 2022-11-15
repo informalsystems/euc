@@ -64,6 +64,8 @@ jobs:
       config: ${{ steps.set-config.outputs.config }}
     steps:
       - uses: actions/checkout@v3
+        with:
+          token: ${{ INFORMAL_BOT_TOKEN }}
       - id: set-config
         run: |
           if [ -n "${ACT+x}" ]; then

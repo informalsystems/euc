@@ -44,6 +44,11 @@
       "name": "multisig",
       "build": "v1",
       "version": "v0.3.0"
+    },
+    {
+      "name": "injective",
+      "build": "v1",
+      "version": "v1.7"
     }
   ],
   "os": [
@@ -86,6 +91,10 @@
     },
     {
       "daemon_name": "nomic"
+    },
+    {
+      "daemon_name": "injectived",
+      "chain_name": "injective"
     }
   ],
   "tools": [
