@@ -55,6 +55,7 @@ on:
       - "*-v*"
       - "!cosmos-v*"
       - "!multisig-v*"
+      - "!stakooler-v*"
 
 jobs:
 

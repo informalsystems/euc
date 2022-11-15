@@ -53,6 +53,7 @@ on:
   push:
     tags:
       - "multisig-v*"
+      - "stakooler-v*"
 
 jobs:
 
