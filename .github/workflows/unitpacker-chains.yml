@@ -98,6 +98,8 @@ jobs:
 
       - uses: actions/checkout@v3
         with:
+          token: ${{ secrets.INFORMAL_BOT_TOKEN }}
+        with:
           repository: ${{ matrix.network.codebase.git_repo }}
           ref: ${{ matrix.network.codebase.recommended_version }}
 
@@ -256,6 +258,8 @@ jobs:
     steps:
 
       - uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.INFORMAL_BOT_TOKEN }}
         if: runner.os == 'macOS'
 
       - uses: actions/download-artifact@v3
