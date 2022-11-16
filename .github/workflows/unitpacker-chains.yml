@@ -115,7 +115,7 @@ jobs:
       - name: Verify WASM version
         id: get-wasm
         run: |
-          FOUND=$(~/go/bin/${{ matrix.network.daemon_name }} version --long --output json 2>&1 | jq -r '.build_deps[]|select(.|startswith("github.com/CosmWasm/wasmvm@"))|split("@")[1]')
+          FOUND=$(~/go/bin/${{ matrix.network.daemon_name }} version --output json 2>&1 | jq -r '.build_deps[]|select(.|startswith("github.com/CosmWasm/wasmvm@"))|split("@")[1]')
           if [ "$FOUND" != "" ]; then
             echo "Binary uses version $FOUND of CosmWasmVM."
             echo "::set-output name=wasm::$FOUND"
