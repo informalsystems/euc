@@ -110,7 +110,7 @@ jobs:
         run: make install
 
       - name: Print binary version
-        run: ~/go/bin/${{ matrix.network.daemon_name }} version #--long
+        run: ~/go/bin/${{ matrix.network.daemon_name }} version -h
 
       - name: Verify WASM version
         id: get-wasm
