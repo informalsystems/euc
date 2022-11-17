@@ -110,12 +110,12 @@ jobs:
         run: make install
 
       - name: Print binary version
-        run: ~/go/bin/${{ matrix.network.daemon_name }} version --help
+        run: ~/go/bin/${{ matrix.network.daemon_name }} version 
 
       - name: Verify WASM version
         id: get-wasm
         run: |
-          FOUND=$(~/go/bin/${{ matrix.network.daemon_name }} version | jq -r '.build_deps[]|select(.|startswith("github.com/CosmWasm/wasmvm@"))|split("@")[1]')
+          FOUND=$(find /go -name libwasmvm*.so)
           if [ "$FOUND" != "" ]; then
             echo "Binary uses version $FOUND of CosmWasmVM."
             echo "::set-output name=wasm::$FOUND"
