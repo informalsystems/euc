@@ -115,7 +115,7 @@ jobs:
       - name: Verify WASM version
         id: get-wasm
         run: |
-          FOUND=$(find ~/go/bin -name libwasmvm*.so)
+          FOUND=$(find ~/go/bin -name libwasmvm*)
           if [ "$FOUND" != "" ]; then
             echo "Binary uses version $FOUND of CosmWasmVM."
             echo "::set-output name=wasm::$FOUND"
