@@ -56,6 +56,9 @@ on:
       - "!cosmos-v*"
       - "!multisig-v*"
 
+permissions:
+      contents: write
+
 jobs:
 
   config:
@@ -321,6 +324,7 @@ jobs:
       - config
       - package
     runs-on: ubuntu-latest
+    
     steps:
 
       - uses: actions/download-artifact@v3
