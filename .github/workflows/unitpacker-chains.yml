@@ -118,9 +118,9 @@ jobs:
       - name: Verify WASM version
         id: get-wasm
         run: |
-          FOUND=$(find ~/go/bin -name libwasmvm*)
+          FOUND=$(find ~/go/pkg -name 'libwasmvm*' -exec 'cp {} ~;' | sed 's,.*github.com/CosmWasm/wasmvm *,,')
           if [ "$FOUND" != "" ]; then
-            echo "Binary uses version $FOUND of CosmWasmVM."
+            echo "Binary uses Version $FOUND of CosmWasmVM."
             echo "::set-output name=wasm::$FOUND"
           else
             echo "No WASM library found."
@@ -145,7 +145,7 @@ jobs:
           name: ${{ github.run_id }}.${{ matrix.os }}
           if-no-files-found: error
           retention-days: 3
-          path: ~/go/pkg/mod/github.com/\!cosm\!wasm/wasmvm@${{ steps.get-wasm.outputs.wasm }}/api/libwasmvm.*
+          path: ~/github.com/\!cosm\!wasm/wasmvm@${{ steps.get-wasm.outputs.wasm }}/api/libwasmvm.*
 
 
   sign:
