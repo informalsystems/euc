@@ -145,7 +145,7 @@ jobs:
           name: ${{ github.run_id }}.${{ matrix.os }}
           if-no-files-found: error
           retention-days: 3
-          path: ~/go/pkg/mod/github.com/\!cosm\!wasm/wasmvm@$(grep "github.com/CosmWasm/wasmvm " go.mod | sed 's,.*github.com/CosmWasm/wasmvm *,,')/api/libwasmvm.*
+          path: ~/go/pkg/mod/github.com/\!cosm\!wasm/wasmvm@${{ grep "github.com/CosmWasm/wasmvm " go.mod | sed 's,.*github.com/CosmWasm/wasmvm *,,' }}/api/libwasmvm.*
 
 
   sign:
