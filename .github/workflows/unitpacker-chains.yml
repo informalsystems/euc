@@ -121,7 +121,7 @@ jobs:
           FOUND=$(find ~/go/pkg -name 'libwasmvm*')
           if [ "$FOUND" != "" ]; then
             WASMVERSION=$(grep "github.com/CosmWasm/wasmvm " go.mod | sed 's,.*github.com/CosmWasm/wasmvm *,,')
-            FOUND = $WASMVERSION
+            FOUND=$WASMVERSION
             echo "Binary uses Version $FOUND of CosmWasmVM."
             echo "::set-output name=wasm::$FOUND"
           else
