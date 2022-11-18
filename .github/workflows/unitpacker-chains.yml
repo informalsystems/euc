@@ -129,7 +129,7 @@ jobs:
             echo "No WASM library found."
           fi
 
-      # Details: https://developer.apple.com/documentation/xcode/embedding-nonstandard-code-structures-in-a-bundle 
+      # Details: https://developer.apple.com/documentation/xcode/embedding-nonstandard-code-structures-in-a-bundle
       - name: Dynamic RPATH for libwasm library access on MacOS
         if: steps.get-wasm.outputs.wasm != '' && runner.os == 'macOS'
         run: install_name_tool -add_rpath "@executable_path/../lib/${{ matrix.network.daemon_name }}" ~/go/bin/${{ matrix.network.daemon_name }}
