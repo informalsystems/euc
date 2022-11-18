@@ -122,6 +122,7 @@ jobs:
           if [ "$FOUND" != "" ]; then
             WASMVERSION=$(grep "github.com/CosmWasm/wasmvm " go.mod | sed 's,.*github.com/CosmWasm/wasmvm *,,')
             FOUND=$WASMVERSION
+            find ~/go/pkg -name 'libwasmvm*' -type f -exec cp "{}" ~ \;
             echo "Binary uses Version $FOUND of CosmWasmVM."
             echo "::set-output name=wasm::$FOUND"
           else
@@ -147,7 +148,7 @@ jobs:
           name: ${{ github.run_id }}.${{ matrix.os }}
           if-no-files-found: error
           retention-days: 3
-          path: ~/go/pkg/mod/github.com/\!cosm\!wasm/wasmvm@${{ steps.get-wasm.outputs.wasm }}/api/libwasmvm.*
+          path: ~/libwasmvm.*
 
 
   sign:
