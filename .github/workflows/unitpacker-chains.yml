@@ -147,7 +147,7 @@ jobs:
           name: ${{ github.run_id }}.${{ matrix.os }}
           if-no-files-found: error
           retention-days: 3
-          path: ~/go/pkg/mod/github.com/\!cosm\!wasm/wasmvm@${{ WASMVERSION }}/api/libwasmvm.*
+          path: ~/go/pkg/mod/github.com/\!cosm\!wasm/wasmvm@${{ steps.get-wasm.outputs.wasm }}/api/libwasmvm.*
 
 
   sign:
