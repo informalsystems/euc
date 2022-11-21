@@ -5,6 +5,9 @@ on:
     tags:
       - "cosmos-v*"
 
+permissions:
+      contents: write
+      
 jobs:
 
   build-and-release:
