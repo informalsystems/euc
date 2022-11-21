@@ -16,9 +16,10 @@
     <choices-outline>
 {{ range .BINARIES }}        <line choice="network.cosmos.{{.}}"/>
 {{ end }}    </choices-outline>
-{{ range .BINARIES }}
+{{ $v := .VERSIONS }}
+{{ range $i, $elem := .BINARIES }}
 
-    <choice id="network.cosmos.{{.}}" title="{{.}}">
+    <choice id="network.cosmos.{{.}}" title="{{.}}-{{index $v $i}}">
         <pkg-ref id="network.cosmos.{{.}}">{{.}}.pkg</pkg-ref>
     </choice>
 

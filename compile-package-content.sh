@@ -7,6 +7,7 @@ export COSMOS_VERSION="${INPUT##cosmos-}"
 BINARY_NUMBER="$(jq -r '.package|length' config.json)"
 
 PKG_LIST=""
+VERSION_LIST=""
 for i in $(seq 0 $((BINARY_NUMBER - 1)));
 do
   PACKAGE="$(jq '.package['"$i"']' config.json)"
@@ -17,13 +18,15 @@ do
   echo "Getting $LINK"
   wget -q -O "${NAME}.pkg" "$LINK"
   PKG_LIST="${PKG_LIST},${NAME}"
+  VERSION_LIST="${VERSION_LIST},${VERSION}"
 done
 export BINARIES="${PKG_LIST##,}"
+export VERSIONS="${VERSION_LIST##,}"
 
 cp LICENSE Resources/LICENSE
 
 wget -q -O stemplate https://github.com/freshautomations/stemplate/releases/download/v0.6.1/stemplate_darwin_amd64
 chmod 755 stemplate
-./stemplate Distribution.template --string COSMOS_VERSION --list BINARIES --output Distribution
+./stemplate Distribution.template --string COSMOS_VERSION --list BINARIES,VERSIONS --output Distribution
 
 cat Distribution
