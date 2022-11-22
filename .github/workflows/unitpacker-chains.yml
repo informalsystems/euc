@@ -56,6 +56,9 @@ on:
       - "!cosmos-v*"
       - "!multisig-v*"
 
+permissions:
+      contents: write
+
 jobs:
 
   config:
@@ -64,6 +67,8 @@ jobs:
       config: ${{ steps.set-config.outputs.config }}
     steps:
       - uses: actions/checkout@v3
+        with:
+          ssh-key: ${{ secrets.INFORMAL_BOT_SSH_PRIVATE_KEY }}
       - id: set-config
         run: |
           if [ -n "${ACT+x}" ]; then
@@ -98,6 +103,7 @@ jobs:
         with:
           repository: ${{ matrix.network.codebase.git_repo }}
           ref: ${{ matrix.network.codebase.recommended_version }}
+          ssh-key: ${{ secrets.INFORMAL_BOT_SSH_PRIVATE_KEY }}
 
       - uses: actions/setup-go@v3
         with:
@@ -107,14 +113,17 @@ jobs:
         run: make install
 
       - name: Print binary version
-        run: ~/go/bin/${{ matrix.network.daemon_name }} version --long
+        run: ~/go/bin/${{ matrix.network.daemon_name }} version 
 
       - name: Verify WASM version
         id: get-wasm
         run: |
-          FOUND=$(~/go/bin/${{ matrix.network.daemon_name }} version --long --output json 2>&1 | jq -r '.build_deps[]|select(.|startswith("github.com/CosmWasm/wasmvm@"))|split("@")[1]')
+          FOUND=$(find ~/go/pkg -name 'libwasmvm*')
           if [ "$FOUND" != "" ]; then
-            echo "Binary uses version $FOUND of CosmWasmVM."
+            WASMVERSION=$(grep "github.com/CosmWasm/wasmvm " go.mod | sed 's,.*github.com/CosmWasm/wasmvm *,,')
+            FOUND=$WASMVERSION
+            find ~/go/pkg -name 'libwasmvm*' -type f -exec cp "{}" ~ \;
+            echo "Binary uses Version $FOUND of CosmWasmVM."
             echo "::set-output name=wasm::$FOUND"
           else
             echo "No WASM library found."
@@ -139,7 +148,7 @@ jobs:
           name: ${{ github.run_id }}.${{ matrix.os }}
           if-no-files-found: error
           retention-days: 3
-          path: ~/go/pkg/mod/github.com/\!cosm\!wasm/wasmvm@${{ steps.get-wasm.outputs.wasm }}/api/libwasmvm.*
+          path: ~/libwasmvm.*
 
 
   sign:
@@ -254,6 +263,8 @@ jobs:
     steps:
 
       - uses: actions/checkout@v3
+        with:
+          ssh-key: ${{ secrets.INFORMAL_BOT_SSH_PRIVATE_KEY }}
         if: runner.os == 'macOS'
 
       - uses: actions/download-artifact@v3
@@ -316,6 +327,7 @@ jobs:
       - config
       - package
     runs-on: ubuntu-latest
+    
     steps:
 
       - uses: actions/download-artifact@v3

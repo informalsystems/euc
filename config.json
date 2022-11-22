@@ -44,6 +44,11 @@
       "name": "multisig",
       "build": "v1",
       "version": "v0.3.0"
+    },
+    {
+      "name": "injectived",
+      "build": "v1",
+      "version": "v1.7"
     }
   ],
   "os": [
@@ -86,6 +91,14 @@
     },
     {
       "daemon_name": "nomic"
+    },
+    {
+      "daemon_name": "injectived",
+      "chain_name": "injective",
+      "codebase": {
+        "recommended_version": "v1.7",
+        "git_repo": "InjectiveLabs/injective-core"
+      }
     }
   ],
   "tools": [
