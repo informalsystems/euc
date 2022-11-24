@@ -2,13 +2,13 @@
   "package": [
     {
       "name": "regen",
-      "build": "v1",
-      "version": "v4.0.0"
+      "build": "v2",
+      "version": "v4.1.5"
     },
     {
       "name": "osmosisd",
-      "build": "v4",
-      "version": "v11.0.0"
+      "build": "v5",
+      "version": "v12.3.0"
     },
     {
       "name": "gaiad",
