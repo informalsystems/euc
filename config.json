@@ -23,12 +23,12 @@
     {
       "name": "akash",
       "build": "v2",
-      "version": "v0.16.3"
+      "version": "v0.18.1"
     },
     {
       "name": "ag0",
       "build": "v2",
-      "version": "agoric-upgrade-7"
+      "version": "agoric-upgrade-8"
     },
     {
       "name": "cheqd-noded",
