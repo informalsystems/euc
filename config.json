@@ -26,7 +26,7 @@
       "version": "v0.18.1"
     },
     {
-      "name": "ag0",
+      "name": "agd",
       "build": "v3",
       "version": "agoric-upgrade-8"
     },
@@ -81,7 +81,7 @@
       "daemon_name": "akash"
     },
     {
-      "daemon_name": "ag0",
+      "daemon_name": "agd",
       "chain_name": "agoric"
     },
     {
