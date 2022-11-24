@@ -12,13 +12,13 @@
     },
     {
       "name": "gaiad",
-      "build": "v1",
-      "version": "v7.0.2"
+      "build": "v2",
+      "version": "v7.1.0"
     },
     {
       "name": "junod",
-      "build": "v3",
-      "version": "v9.0.0"
+      "build": "v4",
+      "version": "v11.0.0"
     },
     {
       "name": "akash",
@@ -60,7 +60,7 @@
       "daemon_name": "gaiad",
       "chain_name": "cosmoshub",
       "codebase": {
-        "recommended_version": "v7.0.2"
+        "recommended_version": "v7.1.0"
       }
     },
     {
