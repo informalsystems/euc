@@ -64,7 +64,10 @@
       }
     },
     {
-      "daemon_name": "regen"
+      "daemon_name": "regen",
+      "codebase": {
+        "recommended_version": "v4.1.5"
+      }
     },
     {
       "daemon_name": "osmosisd",
