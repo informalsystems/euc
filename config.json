@@ -22,12 +22,12 @@
     },
     {
       "name": "akash",
-      "build": "v2",
+      "build": "v3",
       "version": "v0.18.1"
     },
     {
       "name": "ag0",
-      "build": "v2",
+      "build": "v3",
       "version": "agoric-upgrade-8"
     },
     {
