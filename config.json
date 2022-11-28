@@ -82,7 +82,10 @@
     },
     {
       "daemon_name": "agd",
-      "chain_name": "agoric"
+      "chain_name": "agoric",
+      "codebase": {
+        "recommended_version": "pismoA"
+      }
     },
     {
       "daemon_name": "cheqd-noded",
