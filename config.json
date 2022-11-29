@@ -26,9 +26,9 @@
       "version": "v0.18.1"
     },
     {
-      "name": "agd",
-      "build": "v3",
-      "version": "pismoA"
+      "name": "ag0",
+      "build": "v2",
+      "version": "agoric-upgrade-7"
     },
     {
       "name": "cheqd-noded",
@@ -82,9 +82,7 @@
     },
     {
       "daemon_name": "agd",
-      "chain_name": "agoric",
-      "codebase": {
-        "recommended_version": "pismoA"
+      "chain_name": "agoric"
       }
     },
     {
