@@ -83,7 +83,6 @@
     {
       "daemon_name": "agd",
       "chain_name": "agoric"
-      }
     },
     {
       "daemon_name": "cheqd-noded",
