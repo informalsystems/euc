@@ -27,7 +27,7 @@
     },
     {
       "name": "ag0",
-      "build": "v2",
+      "build": "v3",
       "version": "agoric-upgrade-7-2"
     },
     {
@@ -81,7 +81,7 @@
       "daemon_name": "akash"
     },
     {
-      "daemon_name": "agd",
+      "daemon_name": "ag0",
       "chain_name": "agoric",
       "codebase": {
         "recommended_version": "agoric-upgrade-7-2",
