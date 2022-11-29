@@ -28,7 +28,7 @@
     {
       "name": "ag0",
       "build": "v2",
-      "version": "agoric-upgrade-7"
+      "version": "agoric-upgrade-7-2"
     },
     {
       "name": "cheqd-noded",
@@ -82,7 +82,11 @@
     },
     {
       "daemon_name": "agd",
-      "chain_name": "agoric"
+      "chain_name": "agoric",
+      "codebase": {
+        "recommended_version": "agoric-upgrade-7-2",
+        "git_repo": "agoric/ag0"
+      }
     },
     {
       "daemon_name": "cheqd-noded",
