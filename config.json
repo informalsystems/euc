@@ -2,38 +2,38 @@
   "package": [
     {
       "name": "regen",
-      "build": "v1",
-      "version": "v4.0.0"
+      "build": "v2",
+      "version": "v4.1.5"
     },
     {
       "name": "osmosisd",
+      "build": "v5",
+      "version": "v12.2.0"
+    },
+    {
+      "name": "gaiad",
+      "build": "v2",
+      "version": "v7.1.0"
+    },
+    {
+      "name": "junod",
       "build": "v4",
       "version": "v11.0.0"
     },
     {
-      "name": "gaiad",
-      "build": "v1",
-      "version": "v7.0.2"
-    },
-    {
-      "name": "junod",
-      "build": "v3",
-      "version": "v9.0.0"
-    },
-    {
       "name": "akash",
-      "build": "v2",
-      "version": "v0.16.3"
+      "build": "v3",
+      "version": "v0.18.1"
     },
     {
       "name": "ag0",
-      "build": "v2",
-      "version": "agoric-upgrade-7"
+      "build": "v3",
+      "version": "agoric-upgrade-7-2"
     },
     {
       "name": "cheqd-noded",
-      "build": "v2",
-      "version": "v0.6.0"
+      "build": "v3",
+      "version": "v0.6.9"
     },
     {
       "name": "ixod",
@@ -60,11 +60,14 @@
       "daemon_name": "gaiad",
       "chain_name": "cosmoshub",
       "codebase": {
-        "recommended_version": "v7.0.2"
+        "recommended_version": "v7.1.0"
       }
     },
     {
-      "daemon_name": "regen"
+      "daemon_name": "regen",
+      "codebase": {
+        "recommended_version": "v4.1.5"
+      }
     },
     {
       "daemon_name": "osmosisd",
@@ -79,7 +82,11 @@
     },
     {
       "daemon_name": "ag0",
-      "chain_name": "agoric"
+      "chain_name": "agoric",
+      "codebase": {
+        "recommended_version": "agoric-upgrade-7-2",
+        "git_repo": "agoric/ag0"
+      }
     },
     {
       "daemon_name": "cheqd-noded",

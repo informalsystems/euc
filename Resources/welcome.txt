@@ -7,5 +7,5 @@ You can find more information about the process at https://github.com/informalsy
 
 This application is provided AS IS, use it at your own risk.
 
-Stake with Cephalopod Equipment, a subsidiary of Informal Systems.
-https://cephalopod.equipment
+Stake with Informal Systems.
+https://informal.systems
