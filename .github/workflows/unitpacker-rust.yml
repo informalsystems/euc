@@ -76,12 +76,14 @@ jobs:
       steps:
         - name: Setup | Checkout
           uses: actions/checkout@v2
+          with:
+            repository: informalsystems/hermes
         - name: Setup | Rust
           uses: ATiltedTree/setup-rust@v1
           with:
             rust-version: stable
         - name: Build | Compile
-          run: cargo check
+          run: cargo build
     test:
       name: Test
       strategy:
