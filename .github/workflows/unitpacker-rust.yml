@@ -57,75 +57,75 @@ on:
       - "hs/rust"
 
 jobs:
-    compile:
-      name: Compile
+    # compile:
+    #   name: Compile
+    #   runs-on: ubuntu-latest
+    #   steps:
+    #     - name: Setup | Checkout
+    #       uses: actions/checkout@v2
+    #       with:
+    #         repository: informalsystems/hermes
+    #     - name: Setup Rust
+    #       uses: ATiltedTree/setup-rust@v1
+    #       with:
+    #         rust-version: stable
+    #     - name: Build | Compile
+    #       run: cargo build --release
+    #     - name: List hermes binary
+    #       run: ls ./target/release
+    #     - name: Print hermes binary version
+    #       run: ./target/release/hermes --version
+        
+        
+    config:
       runs-on: ubuntu-latest
+      outputs:
+        config: ${{ steps.set-config.outputs.config }}
       steps:
-        - name: Setup | Checkout
-          uses: actions/checkout@v2
+        - uses: actions/checkout@v3
+        - id: set-config
+          run: ./compile-unitpacker-config-tools.sh "$GITHUB_REF_NAME"
+
+    config-test:
+      needs: config
+      strategy:
+        matrix: ${{fromJSON(needs.config.outputs.config)}}
+      runs-on: ${{matrix.os}}
+      steps:
+        - run: |
+            echo "hello world"
+            echo "Tool name: ${{matrix.tools.name}}"
+            echo "Version: ${{matrix.tools.ref}}"
+            echo "Git repo: ${{matrix.tools.git_url}}"
+
+    build:
+      needs: config
+      strategy:
+        matrix: ${{ fromJSON(needs.config.outputs.config) }}
+      runs-on: ${{matrix.os}}
+      steps:
+
+        - uses: actions/checkout@v3
           with:
-            repository: informalsystems/hermes
-        - name: Setup Rust
-          uses: ATiltedTree/setup-rust@v1
+            repository: ${{ matrix.tools.git_url }}
+            ref: ${{ matrix.tools.ref }}
+
+        - uses: ATiltedTree/setup-rust@v1
           with:
             rust-version: stable
-        - name: Build | Compile
+
+        - name: Install binary
           run: cargo build --release
-        - name: List hermes binary
-          run: ls ./target/release
-        - name: Print hermes binary version
-          run: ./target/release/hermes --version
-        
-        
-  # config:
-  #   runs-on: ubuntu-latest
-  #   outputs:
-  #     config: ${{ steps.set-config.outputs.config }}
-  #   steps:
-  #     - uses: actions/checkout@v3
-  #     - id: set-config
-  #       run: ./compile-unitpacker-config-tools.sh "$GITHUB_REF_NAME"
 
-  # config-test:
-  #   needs: config
-  #   strategy:
-  #     matrix: ${{fromJSON(needs.config.outputs.config)}}
-  #   runs-on: ${{matrix.os}}
-  #   steps:
-  #     - run: |
-  #         echo "hello world"
-  #         echo "Tool name: ${{matrix.tools.name}}"
-  #         echo "Version: ${{matrix.tools.ref}}"
-  #         echo "Git repo: ${{matrix.tools.git_url}}"
+        - name: Print binary version
+          run: ./target/release/${{ matrix.tools.name }} --version
 
-  # build:
-  #   needs: config
-  #   strategy:
-  #     matrix: ${{ fromJSON(needs.config.outputs.config) }}
-  #   runs-on: ${{matrix.os}}
-  #   steps:
-
-  #     - uses: actions/checkout@v3
-  #       with:
-  #         repository: ${{ matrix.tools.git_url }}
-  #         ref: ${{ matrix.tools.ref }}
-
-  #     - uses: actions/setup-go@v3
-  #       with:
-  #         go-version: '>=1.19.0'
-
-  #     - name: Install binary
-  #       run: go install
-
-  #     - name: Print binary version
-  #       run: ~/go/bin/${{ matrix.tools.name }} --version
-
-  #     - uses: actions/upload-artifact@v3
-  #       with:
-  #         name: ${{ github.run_id }}.${{ matrix.os }}
-  #         if-no-files-found: error
-  #         retention-days: 3
-  #         path: ~/go/bin/${{ matrix.tools.name }}*
+        - uses: actions/upload-artifact@v3
+          with:
+            name: ${{ github.run_id }}.${{ matrix.os }}
+            if-no-files-found: error
+            retention-days: 3
+            path: ./target/release/${{ matrix.tools.name }}*
 
 
   # sign:
