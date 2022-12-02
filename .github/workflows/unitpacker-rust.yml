@@ -128,122 +128,122 @@ jobs:
             path: ./target/release/${{ matrix.tools.name }}*
 
 
-  # sign:
-  #   strategy:
-  #     matrix: ${{ fromJSON(needs.config.outputs.config) }}
-  #   runs-on: ${{matrix.os}}
-  #   needs:
-  #     - config
-  #     - build
-  #   steps:
+    sign:
+      strategy:
+        matrix: ${{ fromJSON(needs.config.outputs.config) }}
+      runs-on: ${{matrix.os}}
+      needs:
+        - config
+        - build
+      steps:
 
-  #     - uses: actions/download-artifact@v3
-  #       with:
-  #         name: ${{ github.run_id }}.${{ matrix.os }}
+        - uses: actions/download-artifact@v3
+          with:
+            name: ${{ github.run_id }}.${{ matrix.os }}
 
-  #     - uses: apple-actions/import-codesign-certs@v1
-  #       if: runner.os == 'macOS'
-  #       with:
-  #         p12-file-base64: ${{ secrets.MAC_APP_CERTIFICATE }}
-  #         p12-password: ${{ secrets.MAC_APP_CERTIFICATE_PASSPHRASE }}
+        - uses: apple-actions/import-codesign-certs@v1
+          if: runner.os == 'macOS'
+          with:
+            p12-file-base64: ${{ secrets.MAC_APP_CERTIFICATE }}
+            p12-password: ${{ secrets.MAC_APP_CERTIFICATE_PASSPHRASE }}
 
-  #     - name: Sign macOS binary
-  #       if: runner.os == 'macOS'
-  #       run: codesign --timestamp -o runtime --sign "${{ secrets.MAC_APP_CERTIFICATE_CN }}" -v ./${{ matrix.tools.name }}
+        - name: Sign macOS binary
+          if: runner.os == 'macOS'
+          run: codesign --timestamp -o runtime --sign "${{ secrets.MAC_APP_CERTIFICATE_CN }}" -v ./${{ matrix.tools.name }}
 
-  #     - name: Verify macOS signature
-  #       if: runner.os == 'macOS'
-  #       run: | 
-  #         codesign -v ./${{ matrix.tools.name }}
+        - name: Verify macOS signature
+          if: runner.os == 'macOS'
+          run: | 
+            codesign -v ./${{ matrix.tools.name }}
 
-  #     - uses: crazy-max/ghaction-import-gpg@v5
-  #       if: runner.os == 'Linux'
-  #       with:
-  #         gpg_private_key: ${{ secrets.GPG_PRIVATE_KEY }}
-  #         passphrase: ${{ secrets.GPG_PASSPHRASE }}
+        - uses: crazy-max/ghaction-import-gpg@v5
+          if: runner.os == 'Linux'
+          with:
+            gpg_private_key: ${{ secrets.GPG_PRIVATE_KEY }}
+            passphrase: ${{ secrets.GPG_PASSPHRASE }}
 
-  #     - name: Sign Linux binary
-  #       if: runner.os == 'Linux'
-  #       run: gpg --detach-sign --armor ${{ matrix.tools.name }}
+        - name: Sign Linux binary
+          if: runner.os == 'Linux'
+          run: gpg --detach-sign --armor ${{ matrix.tools.name }}
 
-  #     - name: Verify Linux signature
-  #       if: runner.os == 'Linux'
-  #       run: gpg --verify ${{ matrix.tools.name }}.asc
+        - name: Verify Linux signature
+          if: runner.os == 'Linux'
+          run: gpg --verify ${{ matrix.tools.name }}.asc
 
-  #     - uses: actions/upload-artifact@v3
-  #       with:
-  #         name: ${{ github.run_id }}.${{ matrix.os }}.signed
-  #         if-no-files-found: error
-  #         retention-days: 3
-  #         path: ${{ matrix.tools.name }}*
+        - uses: actions/upload-artifact@v3
+          with:
+            name: ${{ github.run_id }}.${{ matrix.os }}.signed
+            if-no-files-found: error
+            retention-days: 3
+            path: ${{ matrix.tools.name }}*
 
 
-  # package:
-  #   strategy:
-  #     matrix: ${{ fromJSON(needs.config.outputs.config) }}
-  #   runs-on: ${{ matrix.os }}
-  #   needs:
-  #     - config
-  #     - build
-  #     - sign
-  #   steps:
+    package:
+      strategy:
+        matrix: ${{ fromJSON(needs.config.outputs.config) }}
+      runs-on: ${{ matrix.os }}
+      needs:
+        - config
+        - build
+        - sign
+      steps:
 
-  #     - uses: actions/checkout@v3
-  #       if: runner.os == 'macOS'
+        - uses: actions/checkout@v3
+          if: runner.os == 'macOS'
 
-  #     - uses: actions/download-artifact@v3
-  #       with:
-  #         name: ${{ github.run_id }}.${{ matrix.os }}.signed
+        - uses: actions/download-artifact@v3
+          with:
+            name: ${{ github.run_id }}.${{ matrix.os }}.signed
 
-  #     - name: Create Linux ZIP
-  #       if: runner.os == 'Linux'
-  #       run: |
-  #         mv ${{ matrix.tools.name }}.asc ${{ matrix.tools.name }}_${{ matrix.tools.ref }}_linux.asc
-  #         zip ${{ matrix.tools.name }}_${{ matrix.tools.ref }}_linux.zip ${{ matrix.tools.name }} ${{ matrix.tools.name }}_${{ matrix.tools.ref }}_linux.asc
+        - name: Create Linux ZIP
+          if: runner.os == 'Linux'
+          run: |
+            mv ${{ matrix.tools.name }}.asc ${{ matrix.tools.name }}_${{ matrix.tools.ref }}_linux.asc
+            zip ${{ matrix.tools.name }}_${{ matrix.tools.ref }}_linux.zip ${{ matrix.tools.name }} ${{ matrix.tools.name }}_${{ matrix.tools.ref }}_linux.asc
 
-  #     - uses: apple-actions/import-codesign-certs@v1
-  #       if: runner.os == 'macOS'
-  #       with:
-  #         p12-file-base64: ${{ secrets.MAC_INST_CERTIFICATE }}
-  #         p12-password: ${{ secrets.MAC_INST_CERTIFICATE_PASSPHRASE }}
+        - uses: apple-actions/import-codesign-certs@v1
+          if: runner.os == 'macOS'
+          with:
+            p12-file-base64: ${{ secrets.MAC_INST_CERTIFICATE }}
+            p12-password: ${{ secrets.MAC_INST_CERTIFICATE_PASSPHRASE }}
 
-  #     - name: Create folder structure, package and sign
-  #       if: runner.os == 'macOS'
-  #       run: |
-  #         wget -q -O stemplate https://github.com/freshautomations/stemplate/releases/download/v0.6.1/stemplate_darwin_amd64
-  #         chmod 755 stemplate multisig
-  #         mkdir -p package/usr/local/bin package/usr/local/lib/${{ matrix.tools.name }}
-  #         export NAME=${{ matrix.tools.name }}
-  #         export VERSION=${{ matrix.tools.ref }}
-  #         ./stemplate Info.plist.template --string NAME,VERSION --output package/usr/local/lib/${{ matrix.tools.name }}/Info.plist
-  #         mv ${{ matrix.tools.name }} package/usr/local/bin
-  #         pkgbuild --root package ${{ matrix.tools.name }}_${{ matrix.tools.ref }}_mac.pkg --version ${{ matrix.tools.ref }} --timestamp --sign "${{ secrets.MAC_INST_CERTIFICATE_CN }}"
+        - name: Create folder structure, package and sign
+          if: runner.os == 'macOS'
+          run: |
+            wget -q -O stemplate https://github.com/freshautomations/stemplate/releases/download/v0.6.1/stemplate_darwin_amd64
+            chmod 755 stemplate multisig
+            mkdir -p package/usr/local/bin package/usr/local/lib/${{ matrix.tools.name }}
+            export NAME=${{ matrix.tools.name }}
+            export VERSION=${{ matrix.tools.ref }}
+            ./stemplate Info.plist.template --string NAME,VERSION --output package/usr/local/lib/${{ matrix.tools.name }}/Info.plist
+            mv ${{ matrix.tools.name }} package/usr/local/bin
+            pkgbuild --root package ${{ matrix.tools.name }}_${{ matrix.tools.ref }}_mac.pkg --version ${{ matrix.tools.ref }} --timestamp --sign "${{ secrets.MAC_INST_CERTIFICATE_CN }}"
 
-  #     - name: Notarize package
-  #       if: runner.os == 'macOS'
-  #       run: |
-  #         OUT="$(xcrun notarytool submit ${{ matrix.tools.name }}_${{ matrix.tools.ref }}_mac.pkg --wait -f json --apple-id "${{ secrets.MAC_STORE_APPLE_ID }}" --password "${{ secrets.MAC_STORE_APP_SPECIFIC_PASSWORD }}" --team-id "${{ secrets.MAC_STORE_TEAM_ID }}")"
-  #         echo "$OUT"
-  #         STATUS="$(echo "$OUT" | jq -r .status)"
-  #         ID="$(echo "$OUT" | jq -r .id)"
-  #         if [ "$STATUS" != "Accepted" ]; then exit 1 ; fi
-  #         LOG="$(xcrun notarytool log "$ID" --apple-id "${{ secrets.MAC_STORE_APPLE_ID }}" --password "${{ secrets.MAC_STORE_APP_SPECIFIC_PASSWORD }}" --team-id "${{ secrets.MAC_STORE_TEAM_ID }}")"
-  #         echo "$LOG"
-  #         ISSUES="$(echo "$LOG" | jq -r .issues)"
-  #         if [ "$ISSUES" != "null" ]; then exit 1 ; fi
+        - name: Notarize package
+          if: runner.os == 'macOS'
+          run: |
+            OUT="$(xcrun notarytool submit ${{ matrix.tools.name }}_${{ matrix.tools.ref }}_mac.pkg --wait -f json --apple-id "${{ secrets.MAC_STORE_APPLE_ID }}" --password "${{ secrets.MAC_STORE_APP_SPECIFIC_PASSWORD }}" --team-id "${{ secrets.MAC_STORE_TEAM_ID }}")"
+            echo "$OUT"
+            STATUS="$(echo "$OUT" | jq -r .status)"
+            ID="$(echo "$OUT" | jq -r .id)"
+            if [ "$STATUS" != "Accepted" ]; then exit 1 ; fi
+            LOG="$(xcrun notarytool log "$ID" --apple-id "${{ secrets.MAC_STORE_APPLE_ID }}" --password "${{ secrets.MAC_STORE_APP_SPECIFIC_PASSWORD }}" --team-id "${{ secrets.MAC_STORE_TEAM_ID }}")"
+            echo "$LOG"
+            ISSUES="$(echo "$LOG" | jq -r .issues)"
+            if [ "$ISSUES" != "null" ]; then exit 1 ; fi
 
-  #     - name: Staple package
-  #       if: runner.os == 'macOS'
-  #       run: |
-  #         xcrun stapler staple ${{ matrix.tools.name }}_${{ matrix.tools.ref }}_mac.pkg
-  #         xcrun stapler validate ${{ matrix.tools.name }}_${{ matrix.tools.ref }}_mac.pkg
+        - name: Staple package
+          if: runner.os == 'macOS'
+          run: |
+            xcrun stapler staple ${{ matrix.tools.name }}_${{ matrix.tools.ref }}_mac.pkg
+            xcrun stapler validate ${{ matrix.tools.name }}_${{ matrix.tools.ref }}_mac.pkg
 
-  #     - uses: actions/upload-artifact@v3
-  #       with:
-  #         name: ${{ github.run_id }}.${{ matrix.os }}.signed
-  #         if-no-files-found: error
-  #         retention-days: 3
-  #         path: ${{ matrix.tools.name }}_${{ matrix.tools.ref }}*
+        - uses: actions/upload-artifact@v3
+          with:
+            name: ${{ github.run_id }}.${{ matrix.os }}.signed
+            if-no-files-found: error
+            retention-days: 3
+            path: ${{ matrix.tools.name }}_${{ matrix.tools.ref }}*
 
   # release:
   #   needs:
