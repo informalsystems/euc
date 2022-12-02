@@ -55,6 +55,7 @@ on:
       - "*-v*"
       - "!cosmos-v*"
       - "!multisig-v*"
+      - "!hermes-v*"
 
 permissions:
       contents: write
