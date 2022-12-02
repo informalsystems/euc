@@ -70,11 +70,11 @@ jobs:
           with:
             rust-version: stable
         - name: Build | Compile
-          run: cargo build
+          run: cargo build --release
         - name: List hermes binary
-          run: ls ~/.hermes/bin
+          run: ls ./target/release
         - name: Print hermes binary version
-          run: ~/.hermes/bin/hermes --version
+          run: ./target/release/hermes --version
         
         
   # config:
