@@ -57,19 +57,6 @@ on:
       - "hs/rust"
 
 jobs:
-    lint:
-      name: Lint
-      runs-on: ubuntu-latest
-      steps:
-        - name: Setup | Checkout
-          uses: actions/checkout@v2
-        - name: Setup | Rust
-          uses: ATiltedTree/setup-rust@v1
-          with:
-            rust-version: stable
-            components: clippy
-        - name: Build | Lint
-          run: cargo clippy
     compile:
       name: Compile
       runs-on: ubuntu-latest
@@ -78,36 +65,30 @@ jobs:
           uses: actions/checkout@v2
           with:
             repository: informalsystems/hermes
-        - name: Setup | Rust
+        - name: Setup Rust
           uses: ATiltedTree/setup-rust@v1
           with:
             rust-version: stable
         - name: Build | Compile
           run: cargo build
+        
     test:
       name: Test
       strategy:
         matrix:
           os:
             - ubuntu-latest
-            - windows-latest
             - macOS-latest
           rust:
             - stable
-            - beta
-            - nightly
       runs-on: ${{ matrix.os }}
       needs: [compile]
       steps:
-        - name: Setup | Checkout
-          uses: actions/checkout@v2
-        - name: Setup | Rust
-          uses: ATiltedTree/setup-rust@v1
-          with:
-            rust-version: ${{ matrix.rust }}
-        - name: Build | Compile
-          run: cargo test
-
+        - name: list hermes binary
+          run: ls ~/.hermes/bin
+        - name: Print hermes binary version
+          run: ~/.hermes/bin/hermes --version
+        
   # config:
   #   runs-on: ubuntu-latest
   #   outputs:
