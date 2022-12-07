@@ -38,7 +38,7 @@
     {
       "name": "ixod",
       "build": "v2",
-      "version": "v0.18.1"
+      "version": "v0.19.1"
     },
     {
       "name": "multisig",
@@ -94,7 +94,10 @@
     },
     {
       "daemon_name": "ixod",
-      "chain_name": "impacthub"
+      "chain_name": "impacthub",
+      "codebase": {
+        "recommended_version": "v0.19.1"
+      }
     },
     {
       "daemon_name": "nomic"
