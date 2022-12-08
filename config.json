@@ -38,7 +38,7 @@
     {
       "name": "ixod",
       "build": "v2",
-      "version": "v0.18.1"
+      "version": "v0.19.1"
     },
     {
       "name": "multisig",
@@ -49,6 +49,11 @@
       "name": "injectived",
       "build": "v1",
       "version": "v1.7"
+    },
+    {
+      "name": "strided",
+      "build": "v1",
+      "version": "v4.0.2"
     }
   ],
   "os": [
@@ -94,7 +99,10 @@
     },
     {
       "daemon_name": "ixod",
-      "chain_name": "impacthub"
+      "chain_name": "impacthub",
+      "codebase": {
+        "recommended_version": "v0.19.1"
+      }
     },
     {
       "daemon_name": "nomic"
@@ -106,6 +114,13 @@
         "recommended_version": "v1.7",
         "git_repo": "InjectiveLabs/injective-core"
       }
+    },
+    {
+      "daemon_name": "strided",
+      "chain_name": "stride",
+      "codebase": {
+        "recommended_version": "v4.0.2"
+        }
     }
   ],
   "tools": [

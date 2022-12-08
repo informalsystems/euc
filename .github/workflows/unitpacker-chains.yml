@@ -110,7 +110,7 @@ jobs:
           go-version: '>=1.19.0'
 
       - name: Build binary
-        run: make install
+        run: LEDGER_ENABLED=yes make install
 
       - name: Print binary version
         run: ~/go/bin/${{ matrix.network.daemon_name }} version 
