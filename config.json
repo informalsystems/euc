@@ -49,6 +49,11 @@
       "name": "injectived",
       "build": "v1",
       "version": "v1.7"
+    },
+    {
+      "name": "strided",
+      "build": "v1",
+      "version": "v4.0.2"
     }
   ],
   "os": [
@@ -109,6 +114,13 @@
         "recommended_version": "v1.7",
         "git_repo": "InjectiveLabs/injective-core"
       }
+    },
+    {
+      "daemon_name": "strided",
+      "chain_name": "stride",
+      "codebase": {
+        "recommended_version": "v4.0.2"
+        }
     }
   ],
   "tools": [
