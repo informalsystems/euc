@@ -53,8 +53,6 @@ on:
   push:
     tags:
       - "hermes-v*"
-    branches:
-      - "hs/rust"
 
 jobs:
     # compile:
