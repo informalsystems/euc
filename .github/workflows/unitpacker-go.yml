@@ -54,6 +54,9 @@ on:
     tags:
       - "multisig-v*"
 
+permissions:
+      contents: write
+
 jobs:
 
   config:

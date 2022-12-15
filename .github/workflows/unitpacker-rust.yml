@@ -54,6 +54,9 @@ on:
     tags:
       - "hermes-v*"
 
+permissions:
+      contents: write
+
 jobs:
     # compile:
     #   name: Compile
