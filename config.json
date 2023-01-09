@@ -54,6 +54,11 @@
       "name": "strided",
       "build": "v1",
       "version": "v4.0.2"
+    },
+    {
+      "name": "panacead",
+      "build": "v1",
+      "version": "v2.0.5"
     }
   ],
   "os": [
@@ -121,6 +126,10 @@
       "codebase": {
         "recommended_version": "v4.0.2"
         }
+    },
+    {
+      "daemon_name": "panacead",
+      "chain_name": "panacea"
     }
   ],
   "tools": [
@@ -134,6 +143,5 @@
       "ref": "v1.2.0",
       "git_url": "informalsystems/hermes"
     }
-
   ]
 }
