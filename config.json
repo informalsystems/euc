@@ -37,7 +37,7 @@
     },
     {
       "name": "ixod",
-      "build": "v2",
+      "build": "v3",
       "version": "v0.19.1"
     },
     {
@@ -128,7 +128,11 @@
       "name": "multisig",
       "ref": "v0.3.0",
       "git_url": "informalsystems/multisig"
-
+    },
+    {
+      "name": "hermes",
+      "ref": "v1.2.0",
+      "git_url": "informalsystems/hermes"
     }
 
   ]

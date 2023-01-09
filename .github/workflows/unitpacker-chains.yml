@@ -48,13 +48,14 @@
 # https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows
 # > Note: An event will not be created when you push more than three tags at once.
 
-name: unitpacker
+name: unitpacker-chains
 on:
   push:
     tags:
       - "*-v*"
       - "!cosmos-v*"
       - "!multisig-v*"
+      - "!hermes-v*"
 
 permissions:
       contents: write

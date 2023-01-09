@@ -54,6 +54,9 @@ on:
     tags:
       - "multisig-v*"
 
+permissions:
+      contents: write
+
 jobs:
 
   config:
@@ -190,7 +193,7 @@ jobs:
         if: runner.os == 'macOS'
         run: |
           wget -q -O stemplate https://github.com/freshautomations/stemplate/releases/download/v0.6.1/stemplate_darwin_amd64
-          chmod 755 stemplate multisig
+          chmod 755 stemplate ${{ matrix.tools.name }}
           mkdir -p package/usr/local/bin package/usr/local/lib/${{ matrix.tools.name }}
           export NAME=${{ matrix.tools.name }}
           export VERSION=${{ matrix.tools.ref }}

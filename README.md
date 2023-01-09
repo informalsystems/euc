@@ -14,9 +14,9 @@ Currently, only Intel-based macOS computers are supported.
 Latest version:
 
 
-| Cosmos CLI v13                                                                                                                                                                                                                                       | Status |
+| Cosmos CLI v14                                                                                                                                                                                                                                       | Status |
 |-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|--------|
-| [Download<br>![Cosmos](https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fcryptopedia.gr%2Fwp-content%2Fuploads%2FCosmos_avatar-192x192.jpg&f=1&nofb=1)](https://github.com/informalsystems/euc/releases/download/cosmos-v13/cosmos-v13.pkg) | [![status](https://github.com/informalsystems/euc/actions/workflows/appreleaser.yml/badge.svg)](https://github.com/informalsystems/euc/actions/workflows/appreleaser.yml) |
+| [Download<br>![Cosmos](https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fcryptopedia.gr%2Fwp-content%2Fuploads%2FCosmos_avatar-192x192.jpg&f=1&nofb=1)](https://github.com/informalsystems/euc/releases/download/cosmos-v14/cosmos-v14.pkg) | [![status](https://github.com/informalsystems/euc/actions/workflows/appreleaser.yml/badge.svg)](https://github.com/informalsystems/euc/actions/workflows/appreleaser.yml) |
 
 
 
@@ -36,3 +36,5 @@ Gathered binaries:
 | multisig     | v0.3.0          | multisig-v1    | [![status](https://github.com/informalsystems/euc/actions/workflows/unitpacker-go.yml/badge.svg?branch=multisig-v1)](https://github.com/informalsystems/euc/actions/workflows/unitpacker-go.yml)  |  |
 | Injective     | v1.7            | Injectived-v1  | [![status](https://github.com/informalsystems/euc/actions/workflows/unitpacker-chains.yml/badge.svg?branch=injectived-v1)](https://github.com/informalsystems/euc/actions/workflows/unitpacker-chains.yml)  |  |
 | Stride     | v4.0.2            | Strided-v1  | [![status](https://github.com/informalsystems/euc/actions/workflows/unitpacker-chains.yml/badge.svg?branch=strided-v1)](https://github.com/informalsystems/euc/actions/workflows/unitpacker-chains.yml)  |  |
+| Hermes     | v1.2.0            | Hermes-v1  | [![status](https://github.com/informalsystems/euc/actions/workflows/unitpacker-chains.yml/badge.svg?branch=hermes-v1)](https://github.com/informalsystems/euc/actions/workflows/unitpacker-rust.yml)  |  |
+
