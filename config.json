@@ -42,8 +42,8 @@
     },
     {
       "name": "multisig",
-      "build": "v1",
-      "version": "v0.3.0"
+      "build": "v2",
+      "version": "v0.4.0"
     },
     {
       "name": "injectived",
@@ -144,7 +144,7 @@
   "tools": [
     {
       "name": "multisig",
-      "ref": "v0.3.0",
+      "ref": "v0.4.0",
       "git_url": "informalsystems/multisig"
     },
     {
