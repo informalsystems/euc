@@ -59,6 +59,11 @@
       "name": "panacead",
       "build": "v1",
       "version": "v2.0.5"
+    },
+    {
+      "name": "quicksilverd",
+      "build": "v1",
+      "version": "v1.2.0"
     }
   ],
   "os": [
@@ -130,6 +135,10 @@
     {
       "daemon_name": "panacead",
       "chain_name": "panacea"
+    },
+    {
+      "daemon_name": "quicksilverd",
+      "chain_name": "quicksilver"
     }
   ],
   "tools": [
