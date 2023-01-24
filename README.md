@@ -39,4 +39,6 @@ Gathered binaries:
 | Hermes     | v1.2.0            | Hermes-v1  | [![status](https://github.com/informalsystems/euc/actions/workflows/unitpacker-rust.yml/badge.svg?branch=hermes-v1)](https://github.com/informalsystems/euc/actions/workflows/unitpacker-rust.yml)  |  |
 | Panacea     | v2.0.5            | Hermes-v1  | [![status](https://github.com/informalsystems/euc/actions/workflows/unitpacker-chains.yml/badge.svg?branch=panacead-v1)](https://github.com/informalsystems/euc/actions/workflows/unitpacker-chains.yml)  |  |
 | Quicksilver     | v1.2.0            | Hermes-v1  | [![status](https://github.com/informalsystems/euc/actions/workflows/unitpacker-chains.yml/badge.svg?branch=quicksilverd-v1)](https://github.com/informalsystems/euc/actions/workflows/unitpacker-chains.yml)  |  |
+| PersistenceCore     | v6.1.0            | persistenceCore-v1  | [![status](https://github.com/informalsystems/euc/actions/workflows/unitpacker-chains.yml/badge.svg?branch=persistenceCore-v1)](https://github.com/informalsystems/euc/actions/workflows/unitpacker-chains.yml)  |  |
+
 

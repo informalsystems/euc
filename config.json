@@ -64,6 +64,11 @@
       "name": "quicksilverd",
       "build": "v1",
       "version": "v1.2.0"
+    },
+    {
+      "name": "persistenceCore",
+      "build": "v1",
+      "version": "v6.1.0"
     }
   ],
   "os": [
@@ -139,6 +144,10 @@
     {
       "daemon_name": "quicksilverd",
       "chain_name": "quicksilver"
+    },
+    {
+      "daemon_name": "persistenceCore",
+      "chain_name": "persistence"
     }
   ],
   "tools": [
