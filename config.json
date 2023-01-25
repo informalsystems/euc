@@ -69,6 +69,16 @@
       "name": "persistenceCore",
       "build": "v1",
       "version": "v6.1.0"
+    },
+    {
+      "name": "axelar",
+      "build": "v1",
+      "version": "v0.31.2"
+    },
+    {
+      "name": "okp4d",
+      "build": "v1",
+      "version": "v6.1.0"
     }
   ],
   "os": [
@@ -148,6 +158,13 @@
     {
       "daemon_name": "persistenceCore",
       "chain_name": "persistence"
+    },
+    {
+      "daemon_name": "axelard",
+      "chain_name": "axelar",
+      "codebase": {
+        "recommended_version": "v0.31.2"
+      }
     }
   ],
   "tools": [
