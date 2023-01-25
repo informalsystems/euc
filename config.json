@@ -76,9 +76,9 @@
       "version": "v0.31.2"
     },
     {
-      "name": "okp4d",
+      "name": "evmos",
       "build": "v1",
-      "version": "v6.1.0"
+      "version": "v10.0.1"
     }
   ],
   "os": [
@@ -164,6 +164,10 @@
       "codebase": {
         "recommended_version": "v0.31.2"
       }
+    },
+    {
+      "daemon_name": "evmosd",
+      "chain_name": "evmos"
     }
   ],
   "tools": [
