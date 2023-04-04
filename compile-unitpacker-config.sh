@@ -22,8 +22,9 @@ if [ ! -f "${CHAIN_NAME}_chain.json" ]; then
     apt-get install -y wget
   fi
   echo "::debug::Downloading data from chain registry for chain '${CHAIN_NAME}'."
-  wget -q -O "${CHAIN_NAME}_chain.json" "https://raw.githubusercontent.com/cosmos/chain-registry/master/${CHAIN_NAME}/chain.json"
-  echo "::debug::Download finished without errors."
+  wget -q -O "${CHAIN_NAME}_chain.json" "https://raw.githubusercontent.com/cosmos/chain-registry/master/${CHAIN_NAME}/chain.json" || \
+    echo "::warning file=compile-unitpacker-config.sh::Chain registry download for ${CHAIN_NAME} failed or chain not in registry."
+  echo "::debug::Download finished."
 else
   echo "::debug::Chain file already exists, skipping download."
 fi

@@ -77,6 +77,13 @@
   ],
   "network": [
     {
+      "daemon_name": "cored",
+      "chain_name": "coreum",
+      "codebase": {
+        "recommended_version": "v1.0.0"
+      }
+    },
+    {
       "daemon_name": "gaiad",
       "chain_name": "cosmoshub",
       "codebase": {
@@ -116,7 +123,7 @@
       "daemon_name": "ixod",
       "chain_name": "impacthub",
       "codebase": {
-        "recommended_version": "v0.19.1"
+        "recommended_version": "v0.20.0"
       }
     },
     {

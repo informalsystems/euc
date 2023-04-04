@@ -1,0 +1,349 @@
+# Unitpacker will build a binary, sign it and deploy it as a GitHub release.
+# Required secrets in GitHub:
+###
+###
+# MAC_APP_CERTIFICATE - Developer ID Application certificate, private key and CA certificate.
+# Export these three items from your Mac's local keystore:
+# * Your (encrypted) private key corresponding to your Developer ID Application certificate
+# * Your Apple Developer ID Application Certificate
+# * Apple's "Developer ID Certification Authority" root certificate.
+# Base64-encode the resulting p12 file and paste the string in this secret.
+# The Application signing identity is used to sign individual files.
+###
+# MAC_APP_CERTIFICATE_PASSPHRASE - passphrase for the MAC_APP_CERTIFICATE private key
+# The passphrase that you used to encrypt your private key during the export.
+###
+# MAC_APP_CERTIFICATE_CN - common name on the MAC_APP_CERTIFICATE
+# This looks something like this: "Developer ID Application: <Your name or company name> (<TeamID>)"
+# If it does not start with "Developer ID Application: " it is the incorrect certificate or name.
+###
+###
+# MAC_INST_CERTIFICATE - Developer ID Installer certificate and private key.
+# Export these two items from your Mac's local keystore:
+# * Your (encrypted) private key corresponding to your Developer ID Installer certificate
+# * Your Apple Developer ID Installer Certificate
+# Base64-encode the resulting p12 file and paste the string in this secret.
+# The Installer signing identity is used to sign packages.
+###
+# MAC_INST_CERTIFICATE_PASSPHRASE - passphrase for the MAC_INST_CERTIFICATE private key
+# The passphrase that you used to encrypt your private key during the export.
+###
+# MAC_INST_CERTIFICATE_CN - common name on the MAC_INST_CERTIFICATE
+# This looks something like this: "Developer ID Installer: <Your name or company name> (<TeamID>)"
+# If it does not start with "Developer ID Installer: " it is the incorrect certificate or name.
+###
+###
+# MAC_STORE_APPLE_ID - Apple ID of the user requesting notarization
+# Usually an e-mail address.
+###
+# MAC_STORE_APP_SPECIFIC_PASSWORD - Application specific password of the user requesting notarization.
+# You can request an app-specific password for your Apple ID user at https://appleid.apple.com
+###
+# MAC_STORE_TEAM_ID - Team ID of the user or organization
+# This is the same 10 characters that are displayed in your certificate CN at the end in brackets.
+###
+# GPG_PRIVATE_KEY - PGP private key block for Linux signing
+# GPG_PASSPHRASE - passphrase for the GPG_PRIVATE_KEY
+##
+
+# https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows
+# > Note: An event will not be created when you push more than three tags at once.
+
+name: unitpacker
+on:
+  push:
+    tags:
+      - "*-v*"
+      - "!cosmos-v*"
+#      - "!multisig-v*"
+#      - "!hermes-v*"
+
+permissions:
+      contents: write
+
+jobs:
+
+  config:
+    runs-on: ubuntu-latest
+    outputs:
+      config: ${{ steps.set-config.outputs.config }}
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          ssh-key: ${{ secrets.INFORMAL_BOT_SSH_PRIVATE_KEY }}
+      - id: set-config
+        run: |
+          if [ -n "${ACT+x}" ]; then
+            ./compile-unitpacker-config.sh gaiad-v99.0.1
+          else
+            ./compile-unitpacker-config.sh "$GITHUB_REF_NAME"
+          fi
+
+  config-test:
+    needs: config
+    strategy:
+      matrix: ${{fromJSON(needs.config.outputs.config)}}
+    runs-on: ${{matrix.os}}
+    steps:
+      - run: |
+          echo "hello world"
+          echo "Chain name: ${{matrix.network.chain_name}}"
+          echo "Daemon name: ${{matrix.network.daemon_name}}"
+          echo "Git repo: ${{matrix.network.codebase.git_repo}}"
+          echo "Recommended version: ${{matrix.network.codebase.recommended_version}}"
+
+  build:
+    needs: config
+    strategy:
+      matrix: ${{ fromJSON(needs.config.outputs.config) }}
+    runs-on: ${{ matrix.os }}
+    outputs:
+      wasm: ${{ steps.get-wasm.outputs.wasm }}
+    steps:
+
+      - uses: actions/checkout@v3
+        with:
+          repository: ${{ matrix.network.codebase.git_repo }}
+          ref: ${{ matrix.network.codebase.recommended_version }}
+          ssh-key: ${{ secrets.INFORMAL_BOT_SSH_PRIVATE_KEY }}
+
+      - uses: actions/setup-go@v3
+        with:
+          go-version: '>=1.19.0'
+
+      - name: Build binary
+        run: LEDGER_ENABLED=yes make install
+
+      - name: Print binary version
+        run: ~/go/bin/${{ matrix.network.daemon_name }} version 
+
+      - name: Verify WASM version
+        id: get-wasm
+        run: |
+          FOUND=$(find ~/go/pkg -name 'libwasmvm*')
+          if [ "$FOUND" != "" ]; then
+            WASMVERSION=$(grep "github.com/CosmWasm/wasmvm " go.mod | sed 's,.*github.com/CosmWasm/wasmvm *,,')
+            FOUND=$WASMVERSION
+            find ~/go/pkg -name 'libwasmvm*' -type f -exec cp "{}" ~ \;
+            echo "Binary uses Version $FOUND of CosmWasmVM."
+            echo "::set-output name=wasm::$FOUND"
+          else
+            echo "No WASM library found."
+          fi
+
+      # Details: https://developer.apple.com/documentation/xcode/embedding-nonstandard-code-structures-in-a-bundle
+      - name: Dynamic RPATH for libwasm library access on MacOS
+        if: steps.get-wasm.outputs.wasm != '' && runner.os == 'macOS'
+        run: install_name_tool -add_rpath "@executable_path/../lib/${{ matrix.network.daemon_name }}" ~/go/bin/${{ matrix.network.daemon_name }}
+
+      #Note: Separating uploads flattens the uploaded data, so we can get rid of paths.
+      - uses: actions/upload-artifact@v3
+        with:
+          name: ${{ github.run_id }}.${{ matrix.os }}
+          if-no-files-found: error
+          retention-days: 3
+          path: ~/go/bin/${{ matrix.network.daemon_name }}*
+
+      - uses: actions/upload-artifact@v3
+        if: steps.get-wasm.outputs.wasm != ''
+        with:
+          name: ${{ github.run_id }}.${{ matrix.os }}
+          if-no-files-found: error
+          retention-days: 3
+          path: ~/libwasmvm.*
+
+
+  sign:
+    strategy:
+      matrix: ${{ fromJSON(needs.config.outputs.config) }}
+    runs-on: ${{ matrix.os }}
+    needs:
+      - config
+      - build
+    steps:
+
+      - uses: actions/download-artifact@v3
+        with:
+          name: ${{ github.run_id }}.${{ matrix.os }}
+
+      - uses: apple-actions/import-codesign-certs@v1
+        if: runner.os == 'macOS'
+        with:
+          p12-file-base64: ${{ secrets.MAC_APP_CERTIFICATE }}
+          p12-password: ${{ secrets.MAC_APP_CERTIFICATE_PASSPHRASE }}
+
+      - name: Sign macOS binary
+        if: runner.os == 'macOS'
+        run: codesign --timestamp -o runtime --sign "${{ secrets.MAC_APP_CERTIFICATE_CN }}" -v ./${{ matrix.network.daemon_name }}
+
+      - name: Verify macOS signature
+        if: runner.os == 'macOS'
+        run: codesign -v ./${{ matrix.network.daemon_name }}
+
+      - name: Sign macOS WASM library signature
+        if: needs.build.outputs.wasm != '' && runner.os == 'macOS'
+        run: codesign --timestamp --sign "${{ secrets.MAC_APP_CERTIFICATE_CN }}" -v ./libwasmvm.dylib
+
+      - name: Verify macOS WASM library signature
+        if: needs.build.outputs.wasm != '' && runner.os == 'macOS'
+        run: codesign -v ./libwasmvm.dylib
+
+      - uses: crazy-max/ghaction-import-gpg@v5
+        if: runner.os == 'Linux'
+        with:
+          gpg_private_key: ${{ secrets.GPG_PRIVATE_KEY }}
+          passphrase: ${{ secrets.GPG_PASSPHRASE }}
+
+      - name: Sign Linux binary
+        if: runner.os == 'Linux'
+        run: gpg --detach-sign --armor ${{ matrix.network.daemon_name }}
+
+      - name: Verify Linux signature
+        if: runner.os == 'Linux'
+        run: gpg --verify ${{ matrix.network.daemon_name }}.asc
+
+      - name: Sign Linux WASM library signature
+        if: needs.build.outputs.wasm != '' && runner.os == 'Linux'
+        run: |
+          if [ -f libwasmvm.so ]; then
+            gpg --detach-sign --armor ./libwasmvm.so
+          fi
+          if [ -f libwasmvm.x86_64.so ]; then
+            gpg --detach-sign --armor ./libwasmvm.x86_64.so
+          fi
+          if [ -f libwasmvm.aarch64.so ]; then
+            gpg --detach-sign --armor ./libwasmvm.aarch64.so
+          fi
+
+      - name: Verify Linux WASM library signature
+        if: needs.build.outputs.wasm != '' && runner.os == 'Linux'
+        run: |
+          if [ -f libwasmvm.so.asc ]; then
+            gpg --verify ./libwasmvm.so.asc
+          fi
+          if [ -f libwasmvm.x86_64.so.asc ]; then
+            gpg --verify ./libwasmvm.x86_64.so.asc
+          fi
+          if [ -f libwasmvm.aarch64.so.asc ]; then
+            gpg --verify ./libwasmvm.aarch64.so.asc
+          fi
+
+      - uses: actions/upload-artifact@v3
+        with:
+          name: ${{ github.run_id }}.${{ matrix.os }}.signed
+          if-no-files-found: error
+          retention-days: 3
+          path: ${{ matrix.network.daemon_name }}*
+
+      - uses: actions/upload-artifact@v3
+        if: needs.build.outputs.wasm != '' && runner.os == 'macOS'
+        with:
+          name: ${{ github.run_id }}.${{ matrix.os }}.signed
+          if-no-files-found: error
+          retention-days: 3
+          path: libwasmvm.dylib
+
+      - uses: actions/upload-artifact@v3
+        if: needs.build.outputs.wasm != '' && runner.os == 'Linux'
+        with:
+          name: ${{ github.run_id }}.${{ matrix.os }}.signed
+          if-no-files-found: error
+          retention-days: 3
+          path: |
+            libwasmvm*.so
+            libwasmvm*.so.asc
+
+
+  package:
+    strategy:
+      matrix: ${{ fromJSON(needs.config.outputs.config) }}
+    runs-on: ${{ matrix.os }}
+    needs:
+      - config
+      - build
+      - sign
+    steps:
+
+      - uses: actions/checkout@v3
+        with:
+          ssh-key: ${{ secrets.INFORMAL_BOT_SSH_PRIVATE_KEY }}
+        if: runner.os == 'macOS'
+
+      - uses: actions/download-artifact@v3
+        with:
+          name: ${{ github.run_id }}.${{ matrix.os }}.signed
+
+      - name: Create Linux ZIP
+        if: runner.os == 'Linux'
+        run: |
+          mv ${{ matrix.network.daemon_name }}.asc ${{ matrix.network.daemon_name }}_${{ matrix.network.codebase.recommended_version }}_linux.asc
+          zip ${{ matrix.network.daemon_name }}_${{ matrix.network.codebase.recommended_version }}_linux.zip ${{ matrix.network.daemon_name }} ${{ matrix.network.daemon_name }}_${{ matrix.network.codebase.recommended_version }}_linux.asc libwasmvm*.so libwasmvm*.so.asc
+
+      - uses: apple-actions/import-codesign-certs@v1
+        if: runner.os == 'macOS'
+        with:
+          p12-file-base64: ${{ secrets.MAC_INST_CERTIFICATE }}
+          p12-password: ${{ secrets.MAC_INST_CERTIFICATE_PASSPHRASE }}
+
+      - name: Create folder structure, package and sign
+        if: runner.os == 'macOS'
+        run: |
+          wget -q -O stemplate https://github.com/freshautomations/stemplate/releases/download/v0.6.1/stemplate_darwin_amd64
+          chmod 755 stemplate ${{ matrix.network.daemon_name }}
+          mkdir -p package/usr/local/bin package/usr/local/lib/${{ matrix.network.daemon_name }}
+          export NAME="${{ matrix.network.daemon_name }}"
+          export VERSION="${{ matrix.network.codebase.recommended_version }}"
+          ./stemplate Info.plist.template --string NAME,VERSION --output package/usr/local/lib/${{ matrix.network.daemon_name }}/Info.plist
+          mv ${{ matrix.network.daemon_name }} package/usr/local/bin
+          if [ "${{ needs.build.outputs.wasm }}" != "" ]; then mv libwasmvm.dylib "package/usr/local/lib/${{ matrix.network.daemon_name }}/"; fi
+          pkgbuild --root package ${{ matrix.network.daemon_name }}_${{ matrix.network.codebase.recommended_version }}_mac.pkg --timestamp --sign "${{ secrets.MAC_INST_CERTIFICATE_CN }}"
+
+      - name: Notarize package
+        if: runner.os == 'macOS'
+        run: |
+          OUT="$(xcrun notarytool submit ${{ matrix.network.daemon_name }}_${{ matrix.network.codebase.recommended_version }}_mac.pkg --wait -f json --apple-id "${{ secrets.MAC_STORE_APPLE_ID }}" --password "${{ secrets.MAC_STORE_APP_SPECIFIC_PASSWORD }}" --team-id "${{ secrets.MAC_STORE_TEAM_ID }}")"
+          echo "$OUT"
+          STATUS="$(echo "$OUT" | jq -r .status)"
+          ID="$(echo "$OUT" | jq -r .id)"
+          if [ "$STATUS" != "Accepted" ]; then exit 1 ; fi
+          LOG="$(xcrun notarytool log "$ID" --apple-id "${{ secrets.MAC_STORE_APPLE_ID }}" --password "${{ secrets.MAC_STORE_APP_SPECIFIC_PASSWORD }}" --team-id "${{ secrets.MAC_STORE_TEAM_ID }}")"
+          echo "$LOG"
+          ISSUES="$(echo "$LOG" | jq -r .issues)"
+          if [ "$ISSUES" != "null" ]; then exit 1 ; fi
+
+      - name: Staple package
+        if: runner.os == 'macOS'
+        run: |
+          xcrun stapler staple ${{ matrix.network.daemon_name }}_${{ matrix.network.codebase.recommended_version }}_mac.pkg
+          xcrun stapler validate ${{ matrix.network.daemon_name }}_${{ matrix.network.codebase.recommended_version }}_mac.pkg
+
+      - uses: actions/upload-artifact@v3
+        with:
+          name: ${{ github.run_id }}.${{ matrix.os }}.signed
+          if-no-files-found: error
+          retention-days: 3
+          path: ${{ matrix.network.daemon_name }}_${{ matrix.network.codebase.recommended_version }}*
+
+  release:
+    needs:
+      - config
+      - package
+    runs-on: ubuntu-latest
+    
+    steps:
+
+      - uses: actions/download-artifact@v3
+        with:
+          name: ${{ github.run_id }}.${{ fromJSON(needs.config.outputs.config).os[0] }}.signed
+
+      - uses: actions/download-artifact@v3
+        with:
+          name: ${{ github.run_id }}.${{ fromJSON(needs.config.outputs.config).os[1] }}.signed
+
+      - uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          fail_on_unmatched_files: true
+          files: |
+            ${{ fromJSON(needs.config.outputs.config).network[0].daemon_name }}_${{ fromJSON(needs.config.outputs.config).network[0].codebase.recommended_version }}_mac.pkg
+            ${{ fromJSON(needs.config.outputs.config).network[0].daemon_name }}_${{ fromJSON(needs.config.outputs.config).network[0].codebase.recommended_version }}_linux.zip
