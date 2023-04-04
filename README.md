@@ -14,9 +14,9 @@ Currently, only Intel-based macOS computers are supported.
 Latest version:
 
 
-| Cosmos CLI v17                                                                                                                                                                                                                                       | Status |
+| Cosmos CLI v18                                                                                                                                                                                                                                       | Status |
 |-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|--------|
-| [Download<br>![Cosmos](https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fcryptopedia.gr%2Fwp-content%2Fuploads%2FCosmos_avatar-192x192.jpg&f=1&nofb=1)](https://github.com/informalsystems/euc/releases/download/cosmos-v17/cosmos-v17.pkg) | [![status](https://github.com/informalsystems/euc/actions/workflows/appreleaser.yml/badge.svg)](https://github.com/informalsystems/euc/actions/workflows/appreleaser.yml) |
+| [Download<br>![Cosmos](https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fcryptopedia.gr%2Fwp-content%2Fuploads%2FCosmos_avatar-192x192.jpg&f=1&nofb=1)](https://github.com/informalsystems/euc/releases/download/cosmos-v18/cosmos-v18.pkg) | [![status](https://github.com/informalsystems/euc/actions/workflows/appreleaser.yml/badge.svg)](https://github.com/informalsystems/euc/actions/workflows/appreleaser.yml) |
 
 
 
