@@ -32,8 +32,8 @@
     },
     {
       "name": "cheqd-noded",
-      "build": "v3",
-      "version": "v0.6.9"
+      "build": "v4",
+      "version": "v1.4.0"
     },
     {
       "name": "ixod",
