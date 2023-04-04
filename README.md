@@ -14,9 +14,9 @@ Currently, only Intel-based macOS computers are supported.
 Latest version:
 
 
-| Cosmos CLI v15                                                                                                                                                                                                                                       | Status |
+| Cosmos CLI v16                                                                                                                                                                                                                                       | Status |
 |-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|--------|
-| [Download<br>![Cosmos](https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fcryptopedia.gr%2Fwp-content%2Fuploads%2FCosmos_avatar-192x192.jpg&f=1&nofb=1)](https://github.com/informalsystems/euc/releases/download/cosmos-v15/cosmos-v15.pkg) | [![status](https://github.com/informalsystems/euc/actions/workflows/appreleaser.yml/badge.svg)](https://github.com/informalsystems/euc/actions/workflows/appreleaser.yml) |
+| [Download<br>![Cosmos](https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fcryptopedia.gr%2Fwp-content%2Fuploads%2FCosmos_avatar-192x192.jpg&f=1&nofb=1)](https://github.com/informalsystems/euc/releases/download/cosmos-v16/cosmos-v16.pkg) | [![status](https://github.com/informalsystems/euc/actions/workflows/appreleaser.yml/badge.svg)](https://github.com/informalsystems/euc/actions/workflows/appreleaser.yml) |
 
 
 
@@ -31,7 +31,7 @@ Gathered binaries:
 | akash       | v0.18.1          | akash-v3       | [![status](https://github.com/informalsystems/euc/actions/workflows/unitpacker-chains.yml/badge.svg?branch=akash-v3)](https://github.com/informalsystems/euc/actions/workflows/unitpacker-chains.yml)       |  |
 | ag0         | agoric-upgrade-7-2 | ag0-v3         | [![status](https://github.com/informalsystems/euc/actions/workflows/unitpacker-chains.yml/badge.svg?branch=ag0-v3)](https://github.com/informalsystems/euc/actions/workflows/unitpacker-chains.yml)         |  |
 | cheqd-noded | v0.6.9           | cheqd-noded-v3 | [![status](https://github.com/informalsystems/euc/actions/workflows/unitpacker-chains.yml/badge.svg?branch=cheqd-noded-v3)](https://github.com/informalsystems/euc/actions/workflows/unitpacker-chains.yml) |  |
-| ixod        | v0.19.1          | ixod-v3        | [![unitpacker](https://github.com/informalsystems/euc/actions/workflows/unitpacker-chains.yml/badge.svg?branch=ixod-v3)](https://github.com/informalsystems/euc/actions/workflows/unitpacker-chains.yml)    |  |
+| ixod        | v0.20.0          | ixod-v4        | [![unitpacker](https://github.com/informalsystems/euc/actions/workflows/unitpacker-chains.yml/badge.svg?branch=ixod-v4)](https://github.com/informalsystems/euc/actions/workflows/unitpacker-chains.yml)    |  |
 | nomic       | develop          | nomic-v2       | [![status](https://github.com/informalsystems/euc/actions/workflows/unitpacker-chains.yml/badge.svg?branch=nomic-v2)](https://github.com/informalsystems/euc/actions/workflows/unitpacker-chains.yml)       | The Rust build process is not supported yet. |
 | multisig     | v0.5.0          | multisig-v2    | [![status](https://github.com/informalsystems/euc/actions/workflows/unitpacker-go.yml/badge.svg?branch=multisig-v2)](https://github.com/informalsystems/euc/actions/workflows/unitpacker-go.yml)  |  |
 | Injective     | v1.7            | Injectived-v1  | [![status](https://github.com/informalsystems/euc/actions/workflows/unitpacker-chains.yml/badge.svg?branch=injectived-v1)](https://github.com/informalsystems/euc/actions/workflows/unitpacker-chains.yml)  |  |
