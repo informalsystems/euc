@@ -145,7 +145,7 @@
       "daemon_name": "strided",
       "chain_name": "stride",
       "codebase": {
-        "recommended_version": "v4.0.2"
+        "recommended_version": "v8.0.0"
         }
     },
     {
