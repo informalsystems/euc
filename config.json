@@ -52,8 +52,8 @@
     },
     {
       "name": "strided",
-      "build": "v1",
-      "version": "v4.0.2"
+      "build": "v2",
+      "version": "v8.0.0"
     },
     {
       "name": "panacead",
