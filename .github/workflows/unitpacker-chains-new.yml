@@ -96,6 +96,7 @@ jobs:
 
       - uses: apple-actions/import-codesign-certs@v1
         if: runner.os == 'macOS'
+        id: keychain
         with:
           p12-file-base64: ${{ secrets.MAC_APP_CERTIFICATE }}
           p12-password: ${{ secrets.MAC_APP_CERTIFICATE_PASSPHRASE }}
@@ -105,6 +106,8 @@ jobs:
         with:
           p12-file-base64: ${{ secrets.MAC_INST_CERTIFICATE }}
           p12-password: ${{ secrets.MAC_INST_CERTIFICATE_PASSPHRASE }}
+          create-keychain: false
+          keychain-password: ${{ steps.keychain.outputs.keychain-password }}
 
       - uses: lukasa1993/secret-file-action@v1.0.4
         if: runner.os == 'macOS'
