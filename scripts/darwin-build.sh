@@ -29,7 +29,7 @@ test "$GOOS" = "darwin" || fail "this script will only build for MacOS"
 MY_DIR="$(dirname "$0")"
 GOARCH=amd64 "${MY_DIR}/build.sh" "$@"
 mv "${TARGET_DIR}/usr/local/bin/${BINARY}" "${TARGET_DIR}/usr/local/bin/${BINARY}_amd64"
-GOARCH=arm64 "${MY_DIR}/build.sh" "$@"
+RETRY=1 GOARCH=arm64 "${MY_DIR}/build.sh" "$@"
 mv "${TARGET_DIR}/usr/local/bin/${BINARY}" "${TARGET_DIR}/usr/local/bin/${BINARY}_arm64"
 
 # Merge binaries
