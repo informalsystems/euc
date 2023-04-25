@@ -106,7 +106,7 @@ jobs:
           p12-file-base64: ${{ secrets.MAC_INST_CERTIFICATE }}
           p12-password: ${{ secrets.MAC_INST_CERTIFICATE_PASSPHRASE }}
 
-      - uses: ttd2089/secret-file-action@v1.0.0
+      - uses: lukasa1993/secret-file-action@v1.0.4
         if: runner.os == 'macOS'
         id: private-key-file
         with:
