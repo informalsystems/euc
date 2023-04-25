@@ -23,6 +23,7 @@ TAG="$2"
 BINARY="$3"
 BUILD_DIR="${BUILD_DIR:-build}"
 TARGET_DIR="${TARGET_DIR:-target}"
+GOPATH="${GOPATH:-${HOME}/go}"
 GOOS="$(go env GOOS)"
 GOARCH="$(go env GOARCH)"
 
@@ -31,7 +32,7 @@ REPO_URL="${REPO_URL%%/}"
 # Remove https://github.com/
 REPO_STUB="${REPO_URL##https://github.com/}"
 # Remove git@github.com:
-REPO_STUB="${REPO_URL##git@github.com:}"
+REPO_STUB="${REPO_STUB##git@github.com:}"
 test -n "$(echo "${REPO_STUB}" | grep /)" || fail "cannot parse input repository: no / found"
 ORG="$(echo "${REPO_STUB}" | cut -d/ -f1)"
 test -n "$ORG" || fail "cannot parse input repository: org/repo not found"
