@@ -2,3 +2,4 @@
 *.pkg
 *.asc
 *.zip
+*/bin

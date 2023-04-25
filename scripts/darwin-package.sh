@@ -19,6 +19,13 @@ fail() {
 }
 
 test $# -eq 2 || fail "Usage: $0 <BINARY_NAME> <VERSION>"
+if [ -n "$(which stemplate)" ]; then
+  MY_DIR="$(dirname "$0")"
+  mkdir "${MY_DIR}/bin"
+  wget -q -O "${MY_DIR}/bin/stemplate" https://github.com/freshautomations/stemplate/releases/download/v0.6.1/stemplate_darwin_amd64
+  chmod 755 "${MY_DIR}/bin/stemplate"
+  export PATH="${PATH}:${MY_DIR}/bin"
+fi
 test -n "$(which stemplate)" || fail "stemplate required: https://github.com/freshautomations/stemplate/releases"
 export BINARY_NAME="${1}"
 export VERSION="${2}"
