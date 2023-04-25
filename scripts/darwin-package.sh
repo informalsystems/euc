@@ -19,7 +19,7 @@ fail() {
 }
 
 test $# -eq 2 || fail "Usage: $0 <BINARY_NAME> <VERSION>"
-if [ -n "$(which stemplate)" ]; then
+if [ -z "$(which stemplate)" ]; then
   MY_DIR="$(dirname "$0")"
   mkdir "${MY_DIR}/bin"
   wget -q -O "${MY_DIR}/bin/stemplate" https://github.com/freshautomations/stemplate/releases/download/v0.6.1/stemplate_darwin_amd64
