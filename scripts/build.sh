@@ -26,6 +26,7 @@ TARGET_DIR="${TARGET_DIR:-target}"
 GOPATH="${GOPATH:-${HOME}/go}"
 GOOS="$(go env GOOS)"
 GOARCH="$(go env GOARCH)"
+MY_DIR="$(dirname "$0")"
 
 # Remove trailing /
 REPO_URL="${REPO_URL%%/}"
@@ -50,45 +51,45 @@ export CGO_ENABLED="${CGO_ENABLED:-1}" # required '1' for WASM support
 mkdir -p "${TARGET_DIR}/usr/local/bin" "${TARGET_DIR}/usr/local/lib/${BINARY}"
 
 # Build binary and place it in the target folder
-if [ -f "build/${BINARY}.sh" ]; then
-    # shellcheck source=build/osmosisd.sh
-    . "build/${BINARY}.sh"
-  else
-    test -f "${REPO}/Makefile" || fail "no Makefile found or custom build script found"
-    BUILD=2
-    make -n -B -C "${REPO}" build || BUILD=1
-    if [ "$BUILD" -eq 1 ]; then
-      make -n -B -C "${REPO}" install || BUILD=0
-    fi
-    case "$BUILD" in
-      2)
-        make -B -C "${REPO}" build || fail "make build failed"
-        test -d "${REPO}/${BUILD_DIR}" || fail "make build did not produce build folder"
-        test -x "${REPO}/${BUILD_DIR}/${BINARY}" || fail "could not find built binary after running make build"
-        mv "${REPO}/${BUILD_DIR}/${BINARY}" "${TARGET_DIR}/usr/local/bin/${BINARY}"
-        ;;
-      1)
-        make -B -C "${REPO}" install || fail "make install failed."
-        test -x "${GOPATH}/bin/go/${BINARY}" || fail "could not find built binary after running make install"
-        mv "${GOPATH}/bin/go/${BINARY}" "${TARGET_DIR}/usr/local/bin/${BINARY}"
-        ;;
-      0)
-        make -B -C "${REPO}"
-        if [ -x "${REPO}/${BUILD_DIR}/${BINARY}" ]; then
-          mv "${REPO}/${BUILD_DIR}/${BINARY}" "${TARGET_DIR}/usr/local/bin/${BINARY}"
-        else
-          if [ -x "${GOPATH}/bin/go/${BINARY}" ]; then
-            mv "${GOPATH}/bin/go/${BINARY}" "${TARGET_DIR}/usr/local/bin/${BINARY}"
-          else
-            fail "could not find built binary after running make"
-          fi
-        fi
-        ;;
-      *)
-        fail "invalid Makefile test"
-        ;;
-    esac
+if [ -f "${MY_DIR}/prebuild/${BINARY}.sh" ]; then
+  echo "Sourcing custom pre-build script ${MY_DIR}/prebuild/${BINARY}.sh"
+  # shellcheck source=scripts/prebuild/cored.sh
+  . "${MY_DIR}/prebuild/${BINARY}.sh"
 fi
+test -f "${REPO}/Makefile" || fail "no Makefile found or custom build script found"
+BUILD=2
+make -n -B -C "${REPO}" build || BUILD=1
+if [ "$BUILD" -eq 1 ]; then
+  make -n -B -C "${REPO}" install || BUILD=0
+fi
+case "$BUILD" in
+  2)
+    make -B -C "${REPO}" build || fail "make build failed"
+    test -d "${REPO}/${BUILD_DIR}" || fail "make build did not produce build folder"
+    test -x "${REPO}/${BUILD_DIR}/${BINARY}" || fail "could not find built binary after running make build"
+    mv "${REPO}/${BUILD_DIR}/${BINARY}" "${TARGET_DIR}/usr/local/bin/${BINARY}"
+    ;;
+  1)
+    make -B -C "${REPO}" install || fail "make install failed."
+    test -x "${GOPATH}/bin/go/${BINARY}" || fail "could not find built binary after running make install"
+    mv "${GOPATH}/bin/go/${BINARY}" "${TARGET_DIR}/usr/local/bin/${BINARY}"
+    ;;
+  0)
+    make -B -C "${REPO}"
+    if [ -x "${REPO}/${BUILD_DIR}/${BINARY}" ]; then
+      mv "${REPO}/${BUILD_DIR}/${BINARY}" "${TARGET_DIR}/usr/local/bin/${BINARY}"
+    else
+      if [ -x "${GOPATH}/bin/go/${BINARY}" ]; then
+        mv "${GOPATH}/bin/go/${BINARY}" "${TARGET_DIR}/usr/local/bin/${BINARY}"
+      else
+        fail "could not find built binary after running make"
+      fi
+    fi
+    ;;
+  *)
+    fail "invalid Makefile test"
+    ;;
+esac
 
 # Get WASMVM dependency.
 WASMVM_JSON="$(cd "${REPO}" && go list -json -m github.com/CosmWasm/wasmvm 2> /dev/null || echo "NotFound")"
