@@ -108,7 +108,7 @@ jobs:
 
       - uses: actions/setup-go@v3
         with:
-          go-version: '>=1.19.0'
+          go-version: '>=1.18.0'
 
       - name: Build binary
         run: (LEDGER_ENABLED=true make build && cp build/* $GOPATH/bin) || LEDGER_ENABLED=true make install
