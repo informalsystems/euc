@@ -3,3 +3,4 @@
 *.asc
 *.zip
 */bin
+/.idea/
